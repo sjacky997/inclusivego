@@ -1,1 +1,10 @@
-downloads/
+.DS_Store
+__pycache__/
+*.pyc
+.venv/
+venv/
+.tmp-tool-results/
+agents/
+memory/
+board.md
+attachments/

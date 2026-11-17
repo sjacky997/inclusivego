@@ -83,5 +83,26 @@ class TestPlanApi(unittest.TestCase):
         self.assertEqual(len(pack["facilities"]), 17)
 
 
+class TestAccessDisclosure(unittest.TestCase):
+    """access 五欄在資料中全為 null，介面必須明示「未確認」，不得默默當成可用。"""
+
+    ACCESS_KEYS = {"step_free", "quiet_room", "queue_required", "exit_ease", "staff_interaction"}
+
+    def test_every_access_field_is_still_unknown(self) -> None:
+        pack = json.loads((ROOT / "data" / "facilities.json").read_text(encoding="utf-8"))
+        for item in pack["facilities"]:
+            self.assertEqual(set(item["access"]), self.ACCESS_KEYS, f"{item['name']} 的 access 欄位不齊")
+            for key in self.ACCESS_KEYS:
+                self.assertIsNone(item["access"][key], f"{item['name']} 的 {key} 未核實卻填了值")
+
+    def test_ui_discloses_unknown_access(self) -> None:
+        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        self.assertIn("未確認", html)
+        self.assertIn("function accessRow(", html)
+        self.assertIn("無障礙資訊", html)
+        for key in self.ACCESS_KEYS:
+            self.assertIn(key, html, f"介面未列出 {key}")
+
+
 if __name__ == "__main__":
     unittest.main()

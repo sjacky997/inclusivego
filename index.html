@@ -415,6 +415,7 @@
             ].map((v) => LEVEL_TO_WORD[v] || 'medium'),
             experience: item.story.experience,
             prep: item.story.prep,
+            access: item.access || {},
           };
         }
         return out;
@@ -680,6 +681,13 @@
         if (restMinutes) segments.push(`休息 <strong>${restMinutes}</strong> 分鐘（${restBlocks.length} 次）`);
         if (mealMinutes) segments.push(`用餐 <strong>${mealMinutes}</strong> 分鐘`);
         const totalMinutes = Math.round(planState.planned);
+        const unknownStations = routeFacilities.filter(name => {
+          const a = (facilityData[name] && facilityData[name].access) || {};
+          return ACCESS_FIELDS.some(([key]) => accessValue(a[key]) === '未確認');
+        }).length;
+        const accessLine = unknownStations
+          ? `無障礙資料：${unknownStations}／${routeFacilities.length} 站含未核實項目，已標示「未確認」。`
+          : '無障礙資料：所選景點均已核實。';
         const dropped = routeFacilities.filter(name => !planState.order.includes(name) && !planState.excluded.some(item => item.name === name));
         const excludedRows = planState.excluded.map(item => `<li><strong>${escapeHtml(item.name)}</strong>：${escapeHtml(item.reason)}</li>`).join('');
         const warningRows = planState.warnings.map(text => `<li>${escapeHtml(text)}</li>`).join('');
@@ -687,6 +695,7 @@
           <div style="border:1px solid rgba(16,33,58,.14);border-radius:14px;padding:16px 18px;margin-bottom:18px;background:#f7f7f4">
             <h3 style="margin:0 0 8px;font-size:15px">行程摘要</h3>
             <p style="margin:0 0 8px">選中 <strong>${planState.order.length}</strong> 站，${segments.join('＋')}，合計 <strong>${totalMinutes}</strong> 分鐘。</p>
+            <p style="margin:0 0 8px;font-size:13px;color:#5a6675">${accessLine}</p>
             ${dropped.length ? `<p style="margin:0 0 8px">時間不足，未納入：${dropped.map(escapeHtml).join('、')}。</p>` : ''}
             ${warningRows ? `<ul style="margin:0 0 8px;padding-left:18px">${warningRows}</ul>` : ''}
             ${excludedRows ? `<details style="margin-top:6px"><summary style="cursor:pointer">因你的感官設定排除 ${planState.excluded.length} 站</summary><ul style="margin:8px 0 0;padding-left:18px">${excludedRows}</ul></details>` : ''}
@@ -698,6 +707,33 @@
         if (step === 6 && !state.meal) return '請選擇是否需要用餐安排。';
         return '';
       }
+      const ACCESS_FIELDS = [
+        ['step_free', '無梯級入口'],
+        ['quiet_room', '安靜空間'],
+        ['queue_required', '需要排隊'],
+        ['exit_ease', '容易離場'],
+        ['staff_interaction', '需職員協助'],
+      ];
+      function accessValue(value) {
+        if (value === null || value === undefined || value === '') return '未確認';
+        if (value === true) return '可以';
+        if (value === false) return '不可以';
+        return String(value);
+      }
+      // 資料契約允許 access 為 null；介面必須明示「未確認」，不得把它當成「已確認可用」
+      function accessRow(name) {
+        const a = (facilityData[name] && facilityData[name].access) || {};
+        const chips = ACCESS_FIELDS.map(([key, label]) => {
+          const value = accessValue(a[key]);
+          const unknown = value === '未確認';
+          const style = unknown
+            ? 'border:1px dashed rgba(16,33,58,.32);background:#fff;color:#5a6675'
+            : 'border:1px solid rgba(16,33,58,.16);background:#f2f5f9;color:#10213a';
+          return `<span style="display:inline-block;padding:2px 8px;margin:0 6px 6px 0;border-radius:999px;font-size:12px;${style}">${label}｜${value}</span>`;
+        }).join('');
+        return `<div style="margin-top:10px"><p style="margin:0 0 6px;font-size:12px;color:#5a6675">無障礙資訊（未確認項目不代表不可用，請向公園查詢）</p><div>${chips}</div></div>`;
+      }
+
       function sensoryBadges(name) {
         const data = facilityData[name];
         return sensoryKeys.map((key,i) => {
@@ -735,6 +771,7 @@
             <div class="ig-facility-head"><div><p class="ig-facility-name">${name}</p><span class="ig-facility-area">${areaMap[name]}・${facilityData[name].duration}</span></div>
             <button type="button" class="ig-facility-toggle"${toggleStyle} data-facility="${name}" aria-pressed="${active}">${toggleLabel}</button></div>
             <div class="ig-sensory-row">${sensoryBadges(name)}</div>
+            ${accessRow(name)}
             ${planState && planState.excluded && planState.excluded.some(x=>x.name===name) ? `<div class="ig-inline-note" style="margin-top:8px">已排除：${escapeHtml(planState.excluded.find(x=>x.name===name).reason)}</div>` : ''}
           </article>`;
         }).join('');
@@ -775,6 +812,7 @@
           return `<details class="ig-story" ${i===0?'open':''}><summary><span class="ig-route-number">${i+1}</span><span>${name}・${areaMap[name]}</span></summary><div class="ig-story-body">
             <div class="ig-story-images"><div class="ig-story-image"><span><i data-lucide="image" aria-hidden="true"></i>入口真實照片</span></div><div class="ig-story-image"><span><i data-lucide="image" aria-hidden="true"></i>內部環境照片</span></div></div>
             <div class="ig-sensory-row" style="margin-bottom:13px">${sensoryBadges(name)}</div>
+            ${accessRow(name)}
             <div class="ig-story-columns"><div><h3>我會經歷甚麼</h3><p>${d.experience}</p></div><div><h3>我可以準備甚麼</h3><p>${d.prep}</p></div></div>
             <div class="ig-plan-b"><strong>如果我不想繼續：</strong> 我可以說「我要休息」、離開、略過這一站，或改到下一個較合適的景點。</div>
           </div></details>`;
@@ -797,7 +835,7 @@
         const stories = ordered.map((name,index)=>{
           const data=facilityData[name];
           const sensory=data.sensory.map((level,i)=>`${sensoryTypes[sensoryKeys[i]][0]}｜${levelName[level]}`).join('　');
-          return `<section class="story"><div class="story-head"><span>${index+1}</span><div><h2>${escapeHtml(name)}</h2><p>${escapeHtml(areaMap[name])}・${escapeHtml(data.duration)}</p></div></div><p class="sensory">${escapeHtml(sensory)}</p><div class="columns"><div><h3>我會經歷甚麼</h3><p>${escapeHtml(data.experience)}</p></div><div><h3>我可以準備甚麼</h3><p>${escapeHtml(data.prep)}</p></div></div><p class="plan-b"><strong>如果我不想繼續：</strong>我可以說「我要休息」、離開、略過這一站，或改到下一個較合適的景點。</p></section>`;
+          return `<section class="story"><div class="story-head"><span>${index+1}</span><div><h2>${escapeHtml(name)}</h2><p>${escapeHtml(areaMap[name])}・${escapeHtml(data.duration)}</p></div></div><p class="sensory">${escapeHtml(sensory)}</p><p style="margin:2mm 0 0;font-size:9.5pt;color:#5a6675">無障礙資訊：${escapeHtml(ACCESS_FIELDS.map(([key, label]) => `${label}｜${accessValue((data.access || {})[key])}`).join('　'))}（未確認項目請向公園查詢）</p><div class="columns"><div><h3>我會經歷甚麼</h3><p>${escapeHtml(data.experience)}</p></div><div><h3>我可以準備甚麼</h3><p>${escapeHtml(data.prep)}</p></div></div><p class="plan-b"><strong>如果我不想繼續：</strong>我可以說「我要休息」、離開、略過這一站，或改到下一個較合適的景點。</p></section>`;
         }).join('');
         return `<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><title>InclusiveGo 我的海濱樂園行前故事</title><style>
           @page{size:A4;margin:14mm}*{box-sizing:border-box}body{margin:0;color:#10213a;font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;font-size:11pt;line-height:1.6}h1,h2,h3,p{margin-top:0}h1{font-size:25pt;line-height:1.2;margin-bottom:8px}h2{font-size:16pt;margin-bottom:2px}h3{font-size:11pt;color:#075ed8;margin-bottom:4px}.cover{padding:20mm 12mm;color:#fff;background:linear-gradient(135deg,#075ed8,#073f9f);border-radius:18px;margin-bottom:12mm}.cover p{margin:0}.meta,.summary,.checklist,.route{border:1.5px solid #c8dbf5;border-radius:14px;padding:14px;margin-bottom:10mm}.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px}.summary-grid p{margin:0}.summary-grid strong{display:block;color:#073f9f}.checklist ul{columns:2;margin:0;padding-left:22px}.route ol{margin:0;padding-left:25px}.route li{margin-bottom:7px}.route li span{display:block;color:#536987}.story{break-inside:avoid;page-break-inside:avoid;border:1.5px solid #c8dbf5;border-radius:14px;padding:14px;margin-bottom:9mm}.story-head{display:flex;align-items:center;gap:10px}.story-head>span{display:grid;place-items:center;flex:0 0 34px;height:34px;color:#fff;background:#075ed8;border-radius:50%;font-weight:700}.story-head p{margin:0;color:#536987}.sensory{padding:8px 10px;background:#eaf3ff;border-radius:8px;font-size:9.5pt}.columns{display:grid;grid-template-columns:1fr 1fr;gap:12px}.columns>div{padding:10px;background:#f5f8fd;border-radius:10px}.columns p{margin:0}.plan-b{margin:10px 0 0;padding:10px;border-left:5px solid #f4ba16;background:#fff7dc}.footnote{color:#536987;font-size:9pt;border-top:1px solid #c8dbf5;padding-top:8px}@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}

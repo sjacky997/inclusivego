@@ -109,11 +109,13 @@ POST /api/plan
 
 `planned_minutes` 的組成是四段相加：站點停留（平均 `duration`）＋ 步行 ＋ 休息 ＋ 用餐。`duration_range` 只算站點停留的最短／最長，不含步行與休息，因此摘要卡分開顯示「停留／步行／休息／用餐」，合計才是 `planned_minutes`。
 
-步行時間的算法：每區按固定動線走，走過的路都算，故一區只需計「走到該區最深一站」的 `walk_min`；跨區再加 `WALK_BETWEEN_ZONES_MIN`（8 分鐘，假設值，未經實測）。
+步行時間的算法：每區按固定動線走，走過的路都算，故一區只需計「走到該區最深一站」的 `walk_min`；跨區再加 `zone_walk`（預設 8 分鐘）。
+
+`zone_walk` 是**假設值**，未經實測，因此做成可調參數：請求可選傳 `"zone_walk": 12`，CLI 可用 `--zone-walk 12`，不傳則用 8。這樣可以用不同假設重跑同一情境，看「選站結果會不會變」——若 4／6／8／10／12 分鐘下選出的站點相同，結論就對這個假設不敏感。對照表由 `python3 scripts/sensitivity.py` 產生。
 
 前端行為：提交問卷後自動請求路線；切換景點會重新求解；摘要卡顯示選中站數、預計分鐘、休息次數、未納入清單與排除原因。若未以 `serve.py` 啟動（例如直接雙擊 `index.html`），會顯示提示並暫時按舊次序排列。
 
-測試：`python3 -m unittest discover -s tests -v`（31 條，含端點測試）。
+測試：`python3 -m unittest discover -s tests -v`（33 條，含端點測試）。
 
 ## 常見問題
 

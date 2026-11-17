@@ -75,6 +75,7 @@ class InclusiveGoHandler(SimpleHTTPRequestHandler):
                 rest_interval=int(payload.get("rest_interval") or 0),
                 priority=payload.get("priority") or "low-stimulation",
                 meal=payload.get("meal") or "none",
+                zone_walk=int(payload.get("zone_walk") or 8),
             )
             pack = load_facilities(ROOT / "data" / "facilities.json")
 
@@ -130,4 +131,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())   
+    sys.exit(main())

@@ -45,6 +45,7 @@ class Preferences:
     rest_interval: int = 45            # 0 代表不需要
     priority: str = "low-stimulation"  # low-stimulation | less-walking | more-interest
     meal: str = "none"
+    zone_walk: int = WALK_BETWEEN_ZONES_MIN   # 跨區步行假設值，可調做敏感度分析
 
     def validate(self) -> None:
         if self.budget_min < 30:
@@ -55,6 +56,8 @@ class Preferences:
             raise ValueError(f"未知的 priority：{self.priority}")
         if self.meal not in MEAL_MINUTES:
             raise ValueError(f"未知的 meal：{self.meal}")
+        if not 0 <= self.zone_walk <= 60:
+            raise ValueError(f"跨區步行時間應在 0–60 分鐘之間，收到 {self.zone_walk}")
         unknown = [t for t in self.triggers if t not in DIMS]
         if unknown:
             raise ValueError(f"未知的感官維度：{unknown}")
@@ -220,10 +223,12 @@ def _dp_choose(by_zone: dict[str, list[Stop]], prefs: Preferences) -> tuple[list
         options = _zone_options(stops, prefs)
         if not options:
             continue
-        next_dp: dict[int, tuple[float, dict[str, int]]] = {}
+        # 允許跳過整區：先把「不進這一區」的既有狀態帶進來，
+        # 否則後段區域放不下時，先前找到的可行路線會一併消失（曾導致 0 站）。
+        next_dp: dict[int, tuple[float, dict[str, int]]] = dict(dp)
         for used, (score, chosen) in dp.items():
             for (minutes, gain), mask in options.items():
-                walk = WALK_BETWEEN_ZONES_MIN if chosen else 0
+                walk = prefs.zone_walk if chosen else 0
                 total = used + minutes + walk
                 transitions += 1
                 if total > prefs.budget_min - _fixed_reserve(prefs):
@@ -258,14 +263,14 @@ def _dp_choose(by_zone: dict[str, list[Stop]], prefs: Preferences) -> tuple[list
     return chosen_stops, [], transitions
 
 
-def walk_minutes(stops: list[Stop]) -> float:
-    """各區走到最深一站的累計步行，加上跨區轉移。"""
+def walk_minutes(stops: list[Stop], zone_walk: int = WALK_BETWEEN_ZONES_MIN) -> float:
+    """各區走到最深一站的累計步行，加上跨區轉移（zone_walk 為假設值，可調）。"""
     if not stops:
         return 0.0
     deepest: dict[str, int] = {}
     for stop in stops:
         deepest[stop.zone] = max(deepest.get(stop.zone, 0), stop.walk_min)
-    return float(sum(deepest.values()) + WALK_BETWEEN_ZONES_MIN * (len(deepest) - 1))
+    return float(sum(deepest.values()) + zone_walk * (len(deepest) - 1))
 
 
 def _fixed_reserve(prefs: Preferences) -> int:
@@ -332,7 +337,7 @@ def plan(payload: dict, prefs: Preferences) -> Plan:
 
     blocks = insert_breaks(chosen, prefs)
     break_minutes = sum(b["minutes"] for b in blocks)
-    walk = walk_minutes(chosen)
+    walk = walk_minutes(chosen, prefs.zone_walk)
     planned = total_expected + break_minutes + walk
 
     # 硬約束：插休息/用餐後仍須在預算內，超出則由隊尾移除
@@ -342,7 +347,7 @@ def plan(payload: dict, prefs: Preferences) -> Plan:
         total_expected = sum(s.minutes for s in chosen)
         blocks = insert_breaks(chosen, prefs)
         break_minutes = sum(b["minutes"] for b in blocks)
-        walk = walk_minutes(chosen)
+        walk = walk_minutes(chosen, prefs.zone_walk)
         planned = total_expected + break_minutes + walk
 
     result.stops = sorted(chosen, key=lambda s: (ZONE_ORDER.index(s.zone), -s.score, s.id))
@@ -374,6 +379,7 @@ def parse_args(argv: Iterable[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--rest", type=int, default=45, help="休息間隔（分鐘），0 代表不需要")
     parser.add_argument("--priority", default="low-stimulation", choices=["low-stimulation", "less-walking", "more-interest"])
     parser.add_argument("--meal", default="none", choices=list(MEAL_MINUTES))
+    parser.add_argument("--zone-walk", type=int, default=WALK_BETWEEN_ZONES_MIN, help="跨區步行分鐘（假設值，預設 8）")
     parser.add_argument("--json", action="store_true", help="輸出 JSON")
     return parser.parse_args(list(argv) if argv is not None else None)
 
@@ -387,6 +393,7 @@ def main(argv: Iterable[str] | None = None) -> int:
         rest_interval=args.rest,
         priority=args.priority,
         meal=args.meal,
+        zone_walk=args.zone_walk,
     )
     payload = load_facilities()
     result = plan(payload, prefs)

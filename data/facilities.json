@@ -39,7 +39,8 @@
         "exit_ease": null,
         "staff_interaction": null
       },
-      "legacy_rank": 0
+      "legacy_rank": 0,
+      "walk_min": 1
     },
     {
       "id": "grand_aquarium",
@@ -76,7 +77,8 @@
         "exit_ease": null,
         "staff_interaction": null
       },
-      "legacy_rank": 10
+      "legacy_rank": 10,
+      "walk_min": 2
     },
     {
       "id": "water_world",
@@ -113,7 +115,8 @@
         "exit_ease": null,
         "staff_interaction": null
       },
-      "legacy_rank": 20
+      "legacy_rank": 20,
+      "walk_min": 6
     },
     {
       "id": "old_hong_kong",
@@ -150,7 +153,8 @@
         "exit_ease": null,
         "staff_interaction": null
       },
-      "legacy_rank": 30
+      "legacy_rank": 30,
+      "walk_min": 7
     },
     {
       "id": "sichuan_treasures",
@@ -187,7 +191,8 @@
         "exit_ease": null,
         "staff_interaction": null
       },
-      "legacy_rank": 35
+      "legacy_rank": 35,
+      "walk_min": 11
     },
     {
       "id": "sloth_and_friends",
@@ -224,7 +229,8 @@
         "exit_ease": null,
         "staff_interaction": null
       },
-      "legacy_rank": 40
+      "legacy_rank": 40,
+      "walk_min": 14
     },
     {
       "id": "panda_adventure",
@@ -261,7 +267,8 @@
         "exit_ease": null,
         "staff_interaction": null
       },
-      "legacy_rank": 50
+      "legacy_rank": 50,
+      "walk_min": 2
     },
     {
       "id": "local_stream_ecology",
@@ -298,7 +305,8 @@
         "exit_ease": null,
         "staff_interaction": null
       },
-      "legacy_rank": 55
+      "legacy_rank": 55,
+      "walk_min": 3
     },
     {
       "id": "whiskers_herb_garden",
@@ -335,7 +343,8 @@
         "exit_ease": null,
         "staff_interaction": null
       },
-      "legacy_rank": 60
+      "legacy_rank": 60,
+      "walk_min": 4
     },
     {
       "id": "herb_trail",
@@ -372,7 +381,8 @@
         "exit_ease": null,
         "staff_interaction": null
       },
-      "legacy_rank": 65
+      "legacy_rank": 65,
+      "walk_min": 7
     },
     {
       "id": "meerkat_tortoise_journey",
@@ -409,7 +419,8 @@
         "exit_ease": null,
         "staff_interaction": null
       },
-      "legacy_rank": 70
+      "legacy_rank": 70,
+      "walk_min": 2
     },
     {
       "id": "choo_choo_train",
@@ -446,7 +457,8 @@
         "exit_ease": null,
         "staff_interaction": null
       },
-      "legacy_rank": 75
+      "legacy_rank": 75,
+      "walk_min": 3
     },
     {
       "id": "carousel",
@@ -483,7 +495,8 @@
         "exit_ease": null,
         "staff_interaction": null
       },
-      "legacy_rank": 80
+      "legacy_rank": 80,
+      "walk_min": 3
     },
     {
       "id": "little_bear_fortress",
@@ -520,7 +533,8 @@
         "exit_ease": null,
         "staff_interaction": null
       },
-      "legacy_rank": 85
+      "legacy_rank": 85,
+      "walk_min": 4
     },
     {
       "id": "sky_adventure",
@@ -557,7 +571,8 @@
         "exit_ease": null,
         "staff_interaction": null
       },
-      "legacy_rank": 90
+      "legacy_rank": 90,
+      "walk_min": 5
     },
     {
       "id": "gigas_jungle",
@@ -594,7 +609,8 @@
         "exit_ease": null,
         "staff_interaction": null
       },
-      "legacy_rank": 95
+      "legacy_rank": 95,
+      "walk_min": 5
     },
     {
       "id": "exploration_r",
@@ -631,7 +647,8 @@
         "exit_ease": null,
         "staff_interaction": null
       },
-      "legacy_rank": 100
+      "legacy_rank": 100,
+      "walk_min": 5
     }
   ]
 }

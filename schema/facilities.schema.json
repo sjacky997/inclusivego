@@ -4,7 +4,13 @@
   "title": "InclusiveGo 場地內容包",
   "description": "海洋公園海濱樂園試點的設施資料契約。欄位值為 1-5 等級（1 低、3 中、5 高），非物理量測；access 欄位為 null 代表尚未核實，不得推測填入。",
   "type": "object",
-  "required": ["version", "updated_at", "source", "map_ref", "facilities"],
+  "required": [
+    "version",
+    "updated_at",
+    "source",
+    "map_ref",
+    "facilities"
+  ],
   "additionalProperties": false,
   "properties": {
     "version": {
@@ -33,7 +39,18 @@
       "description": "設施清單；id 必須全檔唯一（由驗證腳本檢查，JSON Schema 不支援跨物件唯一性）。",
       "items": {
         "type": "object",
-        "required": ["id", "name", "zone", "duration", "sensory", "story", "point", "access", "legacy_rank"],
+        "required": [
+          "id",
+          "name",
+          "zone",
+          "duration",
+          "sensory",
+          "story",
+          "point",
+          "access",
+          "walk_min",
+          "legacy_rank"
+        ],
         "additionalProperties": false,
         "properties": {
           "id": {
@@ -48,17 +65,34 @@
           },
           "zone": {
             "type": "string",
-            "enum": ["正門外", "夢幻水都", "亞洲動物天地", "威威天地"],
+            "enum": [
+              "正門外",
+              "夢幻水都",
+              "亞洲動物天地",
+              "威威天地"
+            ],
             "description": "所屬區域；求解器按此分區排序。"
           },
           "duration": {
             "type": "object",
-            "required": ["min", "max", "approx"],
+            "required": [
+              "min",
+              "max",
+              "approx"
+            ],
             "additionalProperties": false,
             "description": "建議停留時間（分鐘）。min 必須小於或等於 max，此規則由驗證腳本檢查。",
             "properties": {
-              "min": { "type": "integer", "minimum": 5, "maximum": 180 },
-              "max": { "type": "integer", "minimum": 5, "maximum": 180 },
+              "min": {
+                "type": "integer",
+                "minimum": 5,
+                "maximum": 180
+              },
+              "max": {
+                "type": "integer",
+                "minimum": 5,
+                "maximum": 180
+              },
               "approx": {
                 "type": "boolean",
                 "description": "true 代表原資料為約數（例如「約 45 分鐘」），求解器應取區間而非單點。"
@@ -67,56 +101,141 @@
           },
           "sensory": {
             "type": "object",
-            "required": ["sound", "light", "crowd", "enclosed", "smell", "cold", "wet", "motion"],
+            "required": [
+              "sound",
+              "light",
+              "crowd",
+              "enclosed",
+              "smell",
+              "cold",
+              "wet",
+              "motion"
+            ],
             "additionalProperties": false,
             "description": "八個感官維度。1 低、2 偏低、3 中、4 偏高、5 高。使用者「避開」門檻建議設為 4，即 4 與 5 觸發。",
             "properties": {
-              "sound": { "$ref": "#/$defs/level" },
-              "light": { "$ref": "#/$defs/level" },
-              "crowd": { "$ref": "#/$defs/level" },
-              "enclosed": { "$ref": "#/$defs/level" },
-              "smell": { "$ref": "#/$defs/level" },
-              "cold": { "$ref": "#/$defs/level" },
-              "wet": { "$ref": "#/$defs/level" },
-              "motion": { "$ref": "#/$defs/level" }
+              "sound": {
+                "$ref": "#/$defs/level"
+              },
+              "light": {
+                "$ref": "#/$defs/level"
+              },
+              "crowd": {
+                "$ref": "#/$defs/level"
+              },
+              "enclosed": {
+                "$ref": "#/$defs/level"
+              },
+              "smell": {
+                "$ref": "#/$defs/level"
+              },
+              "cold": {
+                "$ref": "#/$defs/level"
+              },
+              "wet": {
+                "$ref": "#/$defs/level"
+              },
+              "motion": {
+                "$ref": "#/$defs/level"
+              }
             }
           },
           "story": {
             "type": "object",
-            "required": ["experience", "prep"],
+            "required": [
+              "experience",
+              "prep"
+            ],
             "additionalProperties": false,
             "description": "社交故事的兩段原文，供行前包與 PDF 使用；不得由 AI 改寫事實。",
             "properties": {
-              "experience": { "type": "string", "minLength": 1, "description": "我會經歷甚麼（第一人稱）。" },
-              "prep": { "type": "string", "minLength": 1, "description": "我可以怎樣準備。" }
+              "experience": {
+                "type": "string",
+                "minLength": 1,
+                "description": "我會經歷甚麼（第一人稱）。"
+              },
+              "prep": {
+                "type": "string",
+                "minLength": 1,
+                "description": "我可以怎樣準備。"
+              }
             }
           },
           "point": {
             "type": "object",
-            "required": ["x", "y", "map_ref"],
+            "required": [
+              "x",
+              "y",
+              "map_ref"
+            ],
             "additionalProperties": false,
             "description": "底圖像素座標，原點在左上角；map_ref 必須與內容包頂層一致。",
             "properties": {
-              "x": { "type": "integer", "minimum": 0, "maximum": 5000 },
-              "y": { "type": "integer", "minimum": 0, "maximum": 5000 },
-              "map_ref": { "type": "string", "minLength": 1 }
+              "x": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 5000
+              },
+              "y": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 5000
+              },
+              "map_ref": {
+                "type": "string",
+                "minLength": 1
+              }
             }
           },
           "access": {
             "type": "object",
-            "required": ["step_free", "quiet_room", "queue_required", "exit_ease", "staff_interaction"],
+            "required": [
+              "step_free",
+              "quiet_room",
+              "queue_required",
+              "exit_ease",
+              "staff_interaction"
+            ],
             "additionalProperties": false,
             "description": "無障礙與現場條件。null 表示尚未核實；未核實時系統必須顯示「未確認」，不得當作 false。",
             "properties": {
-              "step_free": { "type": ["boolean", "null"], "description": "全程無梯級、可獨立通行。" },
-              "quiet_room": { "type": ["boolean", "null"], "description": "館內或鄰近有可用的安靜休息點。" },
-              "queue_required": { "type": ["boolean", "null"], "description": "是否必須排隊等候。" },
+              "step_free": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "全程無梯級、可獨立通行。"
+              },
+              "quiet_room": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "館內或鄰近有可用的安靜休息點。"
+              },
+              "queue_required": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "是否必須排隊等候。"
+              },
               "exit_ease": {
-                "enum": ["easy", "moderate", "hard", null],
+                "enum": [
+                  "easy",
+                  "moderate",
+                  "hard",
+                  null
+                ],
                 "description": "中途離場的容易程度：easy 隨時可走、moderate 需走一段、hard 單向通道或需工作人員協助。"
               },
               "staff_interaction": {
-                "enum": ["none", "optional", "required", null],
+                "enum": [
+                  "none",
+                  "optional",
+                  "required",
+                  null
+                ],
                 "description": "是否需要與工作人員交談才能完成體驗。"
               }
             }
@@ -126,6 +245,12 @@
             "minimum": 0,
             "maximum": 999,
             "description": "原 MVP 的固定次序，僅供對照與差異比對；求解器不得使用。"
+          },
+          "walk_min": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 15,
+            "description": "由所屬區域入口沿園區動線步行至本站的累計分鐘；區內按 legacy_rank 遞增。"
           }
         }
       }

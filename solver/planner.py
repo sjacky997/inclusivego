@@ -67,6 +67,7 @@ class Stop:
     zone: str
     minutes: float
     score: float
+    walk_min: int = 0
     reason: str = ""
     excluded: bool = False
     exclude_reason: str = ""
@@ -79,6 +80,7 @@ class Plan:
     total_min: float = 0.0
     total_max: float = 0.0
     planned_min: float = 0.0
+    walk_min: float = 0.0
     warnings: list[str] = field(default_factory=list)
     excluded: list[dict] = field(default_factory=list)
     transitions: int = 0
@@ -97,6 +99,7 @@ class Plan:
             ],
             "breaks": self.breaks,
             "planned_minutes": round(self.planned_min, 1),
+            "walk_minutes": round(self.walk_min, 1),
             "duration_range": [round(self.total_min, 1), round(self.total_max, 1)],
             "warnings": self.warnings,
             "excluded": self.excluded,
@@ -153,6 +156,7 @@ def build_candidates(facilities: list[dict], prefs: Preferences) -> dict[str, li
                     minutes=expected_minutes(item), score=0.0,
                     excluded=True,
                     exclude_reason="；".join(hits) + " 超出可接受門檻",
+                    walk_min=item.get("walk_min", 0),
                 ))
                 continue
 
@@ -160,6 +164,7 @@ def build_candidates(facilities: list[dict], prefs: Preferences) -> dict[str, li
             id=item["id"], name=item["name"], zone=zone,
             minutes=expected_minutes(item),
             score=_score(item, prefs),
+            walk_min=item.get("walk_min", 0),
         ))
     return by_zone
 
@@ -184,11 +189,14 @@ def _zone_options(stops: list[Stop], prefs: Preferences) -> dict[int, tuple[int,
     for mask in range(1, 1 << len(pool)):
         minutes = 0
         score = 0.0
+        walk = 0
         for bit, index in enumerate(pool):
             if mask >> bit & 1:
                 minutes += int(round(usable[index].minutes))
                 score += usable[index].score
-        raw[(minutes, round(score, 3))] = mask
+                walk = max(walk, usable[index].walk_min)
+        # 區內按固定動線走，走到最深一站即已步行完該區
+        raw[(minutes + walk, round(score, 3))] = mask
 
     points = sorted(raw, key=lambda p: (p[0], -p[1]))
     kept: list[tuple[int, float]] = []
@@ -215,7 +223,7 @@ def _dp_choose(by_zone: dict[str, list[Stop]], prefs: Preferences) -> tuple[list
         next_dp: dict[int, tuple[float, dict[str, int]]] = {}
         for used, (score, chosen) in dp.items():
             for (minutes, gain), mask in options.items():
-                walk = WALK_BETWEEN_ZONES_MIN if mask else 0
+                walk = WALK_BETWEEN_ZONES_MIN if chosen else 0
                 total = used + minutes + walk
                 transitions += 1
                 if total > prefs.budget_min - _fixed_reserve(prefs):
@@ -248,6 +256,16 @@ def _dp_choose(by_zone: dict[str, list[Stop]], prefs: Preferences) -> tuple[list
             if mask >> bit & 1:
                 chosen_stops.append(stop)
     return chosen_stops, [], transitions
+
+
+def walk_minutes(stops: list[Stop]) -> float:
+    """各區走到最深一站的累計步行，加上跨區轉移。"""
+    if not stops:
+        return 0.0
+    deepest: dict[str, int] = {}
+    for stop in stops:
+        deepest[stop.zone] = max(deepest.get(stop.zone, 0), stop.walk_min)
+    return float(sum(deepest.values()) + WALK_BETWEEN_ZONES_MIN * (len(deepest) - 1))
 
 
 def _fixed_reserve(prefs: Preferences) -> int:
@@ -314,7 +332,8 @@ def plan(payload: dict, prefs: Preferences) -> Plan:
 
     blocks = insert_breaks(chosen, prefs)
     break_minutes = sum(b["minutes"] for b in blocks)
-    planned = total_expected + break_minutes
+    walk = walk_minutes(chosen)
+    planned = total_expected + break_minutes + walk
 
     # 硬約束：插休息/用餐後仍須在預算內，超出則由隊尾移除
     while planned > prefs.budget_min and len(chosen) > 1:
@@ -323,10 +342,12 @@ def plan(payload: dict, prefs: Preferences) -> Plan:
         total_expected = sum(s.minutes for s in chosen)
         blocks = insert_breaks(chosen, prefs)
         break_minutes = sum(b["minutes"] for b in blocks)
-        planned = total_expected + break_minutes
+        walk = walk_minutes(chosen)
+        planned = total_expected + break_minutes + walk
 
     result.stops = sorted(chosen, key=lambda s: (ZONE_ORDER.index(s.zone), -s.score, s.id))
     result.planned_min = planned
+    result.walk_min = walk
     result.total_min = sum(items[s.id]["duration"]["min"] for s in result.stops)
     result.total_max = sum(items[s.id]["duration"]["max"] for s in result.stops)
     result.breaks = blocks
@@ -375,7 +396,7 @@ def main(argv: Iterable[str] | None = None) -> int:
         return 0
 
     print(f"預算 {prefs.budget_min} 分鐘｜避開 {prefs.triggers or '無'}｜{prefs.handling}｜休息每 {prefs.rest_interval} 分鐘")
-    print(f"選中 {len(result.stops)} 站，預計 {int(result.planned_min)} 分鐘（範圍 {int(result.total_min)}-{int(result.total_max)}）")
+    print(f"選中 {len(result.stops)} 站，預計 {int(result.planned_min)} 分鐘（停留範圍 {int(result.total_min)}-{int(result.total_max)}，步行 {int(result.walk_min)} 分鐘）")
     print("")
     for index, stop in enumerate(result.stops, 1):
         print(f"{index:>2}. [{stop.zone}] {stop.name}　{int(round(stop.minutes))} 分鐘")

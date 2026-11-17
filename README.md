@@ -39,6 +39,7 @@ python3 serve.py                 # 驗證通過後開站
   "point": { "x": 540, "y": 1460, "map_ref": "waterfront-base-1" },
   "access": { "step_free": null, "quiet_room": null, "queue_required": null,
               "exit_ease": null, "staff_interaction": null },
+  "walk_min": 1,
   "legacy_rank": 0
 }
 ```
@@ -56,6 +57,7 @@ python3 serve.py                 # 驗證通過後開站
 | `story.prep` | 我可以怎樣準備 | 同上 |
 | `point.x/y` | 底圖像素座標 | 換底圖必須同步換算 |
 | `access` | 無障礙與現場條件 | **`null` 代表未核實**，見下 |
+| `walk_min` | 由所屬區域入口沿動線步行至本站的累計分鐘 | 區內按 `legacy_rank` 遞增；求解器步行時間由此推算 |
 | `legacy_rank` | 原 MVP 固定次序 | 只供對照，求解器不得使用 |
 
 ## `null` 是甚麼意思
@@ -103,11 +105,15 @@ POST /api/plan
 }
 ```
 
-回應包含 `stops`（含每站理由）、`breaks`、`planned_minutes`、`duration_range`、`warnings`、`excluded`。
+回應包含 `stops`（含每站理由）、`breaks`、`planned_minutes`、`walk_minutes`、`duration_range`、`warnings`、`excluded`。
+
+`planned_minutes` 的組成是四段相加：站點停留（平均 `duration`）＋ 步行 ＋ 休息 ＋ 用餐。`duration_range` 只算站點停留的最短／最長，不含步行與休息，因此摘要卡分開顯示「停留／步行／休息／用餐」，合計才是 `planned_minutes`。
+
+步行時間的算法：每區按固定動線走，走過的路都算，故一區只需計「走到該區最深一站」的 `walk_min`；跨區再加 `WALK_BETWEEN_ZONES_MIN`（8 分鐘，假設值，未經實測）。
 
 前端行為：提交問卷後自動請求路線；切換景點會重新求解；摘要卡顯示選中站數、預計分鐘、休息次數、未納入清單與排除原因。若未以 `serve.py` 啟動（例如直接雙擊 `index.html`），會顯示提示並暫時按舊次序排列。
 
-測試：`python3 -m unittest discover -s tests -v`（24 條，含端點測試）。
+測試：`python3 -m unittest discover -s tests -v`（31 條，含端點測試）。
 
 ## 常見問題
 

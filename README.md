@@ -13,7 +13,9 @@
 | `scripts/validate.py` | 驗證腳本 | 開發者 |
 | `serve.py` | 本地伺服器（開站前先驗證） | 開發者 |
 | `index.html` | 前端單頁 | 開發者 |
-| `.github/workflows/data-validate.yml` | CI，push 時自動驗證 | 開發者 |
+| `solver/planner.py` | 行程求解器（純函數） | 開發者 |
+| `tests/test_planner.py` | 求解器不變量測試 | 開發者 |
+| `.github/workflows/data-validate.yml` | CI，push 時驗證資料並跑測試 | 開發者 |
 
 ## 三個指令
 
@@ -70,6 +72,19 @@ python3 serve.py                 # 驗證通過後開站
 4. `git add`、`git commit`、`git push`，CI 會再驗一次。
 
 驗證不通過時，`serve.py` 會直接拒絕啟動，並指出是第幾筆、哪個欄位出錯。
+
+## 求解器
+
+```bash
+python3 -m solver.planner --budget 240 --avoid sound,crowd --handling avoid-high --rest 45 --meal snack
+python3 -m unittest discover -s tests -v
+```
+
+`--handling` 四種：`avoid-high`（剔除高刺激）、`avoid-medium`（中以上都剔除）、`warn-only`（全部保留只提醒）、`decide-later`（不剔除）。`--priority` 三種：`low-stimulation`、`less-walking`、`more-interest`。
+
+輸出包含每一站的理由、休息與用餐插入位置、以及被排除的景點與原因。區域順序固定（正門外 → 夢幻水都 → 亞洲動物天地 → 威威天地），不會跳區回頭。
+
+實測：p95 延遲 0.3 毫秒，跨區動態規劃轉移 75 次。
 
 ## 常見問題
 

@@ -661,15 +661,24 @@
           box.innerHTML = '<div class="ig-inline-note" style="margin-bottom:14px">未能連接求解器，路線暫按舊次序排列。請以 <code>python serve.py</code> 啟動後重新整理。</div>';
           return;
         }
-        const restCount = planState.breaks.filter(b => b.type === 'rest').length;
-        const mealCount = planState.breaks.filter(b => b.type === 'meal').length;
+        // 口徑統一：planned 含休息與用餐，這裡先把它們拆出來，讓站點時間與時間範圍同一個基準
+        const restBlocks = planState.breaks.filter(b => b.type === 'rest');
+        const mealBlocks = planState.breaks.filter(b => b.type === 'meal');
+        const restMinutes = restBlocks.reduce((sum, b) => sum + b.minutes, 0);
+        const mealMinutes = mealBlocks.reduce((sum, b) => sum + b.minutes, 0);
+        const stopsMinutes = Math.round(planState.planned - restMinutes - mealMinutes);
+        const rangeText = planState.range ? `（不含休息；實際範圍 ${Math.round(planState.range[0])}–${Math.round(planState.range[1])} 分鐘）` : '（不含休息）';
+        const segments = [`預計 <strong>${stopsMinutes}</strong> 分鐘${rangeText}`];
+        if (restMinutes) segments.push(`休息 <strong>${restMinutes}</strong> 分鐘（${restBlocks.length} 次）`);
+        if (mealMinutes) segments.push(`用餐 <strong>${mealMinutes}</strong> 分鐘`);
+        const totalMinutes = Math.round(planState.planned);
         const dropped = routeFacilities.filter(name => !planState.order.includes(name) && !planState.excluded.some(item => item.name === name));
         const excludedRows = planState.excluded.map(item => `<li><strong>${escapeHtml(item.name)}</strong>：${escapeHtml(item.reason)}</li>`).join('');
         const warningRows = planState.warnings.map(text => `<li>${escapeHtml(text)}</li>`).join('');
         box.innerHTML = `
           <div style="border:1px solid rgba(16,33,58,.14);border-radius:14px;padding:16px 18px;margin-bottom:18px;background:#f7f7f4">
             <h3 style="margin:0 0 8px;font-size:15px">行程摘要</h3>
-            <p style="margin:0 0 8px">選中 <strong>${planState.order.length}</strong> 站，預計 <strong>${Math.round(planState.planned)}</strong> 分鐘（實際範圍 ${Math.round(planState.range[0])}–${Math.round(planState.range[1])} 分鐘）${restCount ? `，中途休息 ${restCount} 次` : ''}${mealCount ? '，含用餐時段' : ''}。</p>
+            <p style="margin:0 0 8px">選中 <strong>${planState.order.length}</strong> 站，${segments.join('＋')}，合計 <strong>${totalMinutes}</strong> 分鐘。</p>
             ${dropped.length ? `<p style="margin:0 0 8px">時間不足，未納入：${dropped.map(escapeHtml).join('、')}。</p>` : ''}
             ${warningRows ? `<ul style="margin:0 0 8px;padding-left:18px">${warningRows}</ul>` : ''}
             ${excludedRows ? `<details style="margin-top:6px"><summary style="cursor:pointer">因你的感官設定排除 ${planState.excluded.length} 站</summary><ul style="margin:8px 0 0;padding-left:18px">${excludedRows}</ul></details>` : ''}
@@ -696,9 +705,27 @@
         }
         grid.innerHTML = matchedFacilities.map(name => {
           const active = routeFacilities.includes(name);
-          return `<article class="ig-facility ${active ? 'is-active' : ''}">
+          const excludedItem = planState && planState.excluded ? planState.excluded.find(x => x.name === name) : null;
+          const inPlan = planState && planState.order ? planState.order.includes(name) : false;
+          // 徽章要說「有沒有排進今天這條路線」，而不是「有沒有勾選」
+          let toggleLabel = '＋ 加入路線', toggleStyle = '', articleState = '';
+          if (active) {
+            if (excludedItem) {
+              toggleLabel = '已排除';
+              toggleStyle = ' style="background:#eef1f5;color:#44515f;border:1px solid rgba(16,33,58,.18)"';
+              articleState = ' is-active is-excluded';
+            } else if (inPlan) {
+              toggleLabel = '✓ 已加入';
+              articleState = ' is-active';
+            } else {
+              toggleLabel = '時間不足';
+              toggleStyle = ' style="background:#fff6e5;color:#7a5200;border:1px solid rgba(200,134,26,.45)"';
+              articleState = ' is-active is-dropped';
+            }
+          }
+          return `<article class="ig-facility ${articleState}">
             <div class="ig-facility-head"><div><p class="ig-facility-name">${name}</p><span class="ig-facility-area">${areaMap[name]}・${facilityData[name].duration}</span></div>
-            <button type="button" class="ig-facility-toggle" data-facility="${name}" aria-pressed="${active}">${active ? '✓ 已加入' : '＋ 加入路線'}</button></div>
+            <button type="button" class="ig-facility-toggle"${toggleStyle} data-facility="${name}" aria-pressed="${active}">${toggleLabel}</button></div>
             <div class="ig-sensory-row">${sensoryBadges(name)}</div>
             ${planState && planState.excluded && planState.excluded.some(x=>x.name===name) ? `<div class="ig-inline-note" style="margin-top:8px">已排除：${escapeHtml(planState.excluded.find(x=>x.name===name).reason)}</div>` : ''}
           </article>`;
@@ -792,7 +819,8 @@
         if (printDocument.fonts?.ready) printDocument.fonts.ready.then(openPrint); else setTimeout(openPrint,300);
       }
       function updateResultCount() {
-        root.querySelector('#ig-result-count').textContent = `${routeFacilities.length}／${matchedFacilities.length} 個已加入`;
+        const plannedCount = planState && planState.order ? planState.order.filter(name => routeFacilities.includes(name)).length : routeFacilities.length;
+        root.querySelector('#ig-result-count').textContent = `${plannedCount}／${routeFacilities.length} 站已排入路線`;
         root.querySelector('#ig-selected-count').textContent = `已選景點 ${routeFacilities.length}`;
       }
       function setResultView(view) {

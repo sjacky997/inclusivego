@@ -25,6 +25,8 @@ DEFAULT_DATA = ROOT / "data" / "facilities.json"
 
 ZONE_ORDER = ["正門外", "夢幻水都", "亞洲動物天地", "威威天地"]
 DIMS = ["sound", "light", "crowd", "enclosed", "smell", "cold", "wet", "motion"]
+DIM_LABELS = {"sound": "聲音", "light": "光線", "crowd": "人群", "enclosed": "封閉感",
+              "smell": "氣味", "cold": "低溫", "wet": "濕滑", "motion": "動態"}
 LEVEL_NAMES = {1: "低", 2: "偏低", 3: "中", 4: "偏高", 5: "高"}
 
 WALK_BETWEEN_ZONES_MIN = 8      # 相鄰區域步行時間，假設值
@@ -141,7 +143,7 @@ def build_candidates(facilities: list[dict], prefs: Preferences) -> dict[str, li
 
         if threshold is not None and prefs.triggers:
             hits = [
-                f"{dim} {LEVEL_NAMES.get(item['sensory'][dim], item['sensory'][dim])}"
+                f"{DIM_LABELS.get(dim, dim)} {LEVEL_NAMES.get(item['sensory'][dim], item['sensory'][dim])}"
                 for dim in prefs.triggers
                 if item["sensory"][dim] >= threshold
             ]
@@ -254,7 +256,7 @@ def _fixed_reserve(prefs: Preferences) -> int:
 
 def _describe(stop: Stop, prefs: Preferences, item: dict) -> str:
     if prefs.triggers:
-        values = "、".join(f"{dim} {LEVEL_NAMES.get(item['sensory'][dim], item['sensory'][dim])}" for dim in prefs.triggers)
+        values = "、".join(f"{DIM_LABELS.get(dim, dim)} {LEVEL_NAMES.get(item['sensory'][dim], item['sensory'][dim])}" for dim in prefs.triggers)
         return f"符合你的感官設定（{values}）；預留 {int(round(stop.minutes))} 分鐘"
     return f"預留 {int(round(stop.minutes))} 分鐘"
 

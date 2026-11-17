@@ -2,12 +2,16 @@ name: data-validate
 
 on:
   push:
+    branches:
+      - main
     paths:
       - "data/**"
       - "schema/**"
       - "scripts/**"
       - "solver/**"
       - "tests/**"
+      - "serve.py"
+      - "index.html"
       - "requirements.txt"
       - ".github/workflows/data-validate.yml"
   pull_request:
@@ -17,13 +21,17 @@ on:
       - "scripts/**"
       - "solver/**"
       - "tests/**"
+      - "serve.py"
+      - "index.html"
+      - "requirements.txt"
+      - ".github/workflows/data-validate.yml"
   workflow_dispatch:
 
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"

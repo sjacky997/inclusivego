@@ -311,6 +311,7 @@
           <div><h2>你的海濱樂園行程已準備</h2><p class="ig-help">先確認配對景點，再查看地圖路線和合併版行前社交故事。</p></div>
           <span class="ig-count" id="ig-result-count">0／0 個已加入</span>
         </div>
+        <div class="ig-plan-summary" id="ig-plan-summary"></div>
         <nav class="ig-result-nav" aria-label="行程結果步驟">
           <button type="button" class="ig-result-tab" data-result-view="matches" aria-selected="true"><i data-lucide="layout-grid" aria-hidden="true"></i>1 配對景點</button>
           <button type="button" class="ig-result-tab" data-result-view="map" aria-selected="false"><i data-lucide="map" aria-hidden="true"></i>2 地圖路線</button>
@@ -594,6 +595,86 @@
         return [...new Set(keys.flatMap(k=>facilityMap[k] || []))];
       }
       function updateCount() { root.querySelector('#ig-selected-count').textContent = `已選景點 ${selectedFacilities().length}`; }
+
+      // ── 求解器（方案 B）：路線由 /api/plan 決定，前端只負責顯示 ──
+      const BUDGET_BY_DURATION = { '2h': 120, half: 240, full: 420, unknown: 240 };
+      const SENSORY_KEYS = ['sound','light','crowd','enclosed','smell','cold','wet','motion'];
+      let planState = null;
+
+      function preferencesPayload() {
+        return {
+          budget_min: BUDGET_BY_DURATION[state.duration] || 240,
+          triggers: state.triggers.filter(v => SENSORY_KEYS.includes(v)),
+          handling: state.handling || 'avoid-high',
+          rest_interval: Number(state.rest) || 45,
+          priority: state.priority || 'low-stimulation',
+          meal: state.meal || 'none',
+          candidates: routeFacilities.slice(),
+        };
+      }
+
+      async function requestPlan() {
+        if (!routeFacilities.length) { planState = null; renderPlanSummary(); return; }
+        const payload = preferencesPayload();
+        try {
+          const res = await fetch('/api/plan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+          planState = {
+            order: data.stops.map(stop => stop.name),
+            planned: data.planned_minutes,
+            range: data.duration_range,
+            warnings: data.warnings || [],
+            excluded: (data.excluded || []).filter(item => payload.candidates.includes(item.name)),
+            breaks: data.breaks || [],
+          };
+        } catch (err) {
+          console.error('[InclusiveGo] 求解器未能連線，改用舊次序', err);
+          planState = { error: true, order: [], planned: null, range: null, warnings: [], excluded: [], breaks: [] };
+        }
+        renderPlanSummary();
+      }
+
+      function plannedNames() {
+        if (planState && planState.order && planState.order.length) {
+          return planState.order.filter(name => routeFacilities.includes(name));
+        }
+        return routeFacilities.slice().sort((a,b)=>facilityData[a].rank-facilityData[b].rank);
+      }
+
+      function refreshPlanAndRender() {
+        requestPlan().then(() => {
+          renderMatched(); renderMap(); renderGuide(); updateResultCount();
+          if (globalThis.lucide) lucide.createIcons({attrs:{width:16,height:16}});
+        });
+      }
+
+      function renderPlanSummary() {
+        const box = root.querySelector('#ig-plan-summary');
+        if (!box) return;
+        if (!planState || !routeFacilities.length) { box.innerHTML = ''; return; }
+        if (planState.error) {
+          box.innerHTML = '<div class="ig-inline-note" style="margin-bottom:14px">未能連接求解器，路線暫按舊次序排列。請以 <code>python serve.py</code> 啟動後重新整理。</div>';
+          return;
+        }
+        const restCount = planState.breaks.filter(b => b.type === 'rest').length;
+        const mealCount = planState.breaks.filter(b => b.type === 'meal').length;
+        const dropped = routeFacilities.filter(name => !planState.order.includes(name) && !planState.excluded.some(item => item.name === name));
+        const excludedRows = planState.excluded.map(item => `<li><strong>${escapeHtml(item.name)}</strong>：${escapeHtml(item.reason)}</li>`).join('');
+        const warningRows = planState.warnings.map(text => `<li>${escapeHtml(text)}</li>`).join('');
+        box.innerHTML = `
+          <div style="border:1px solid rgba(16,33,58,.14);border-radius:14px;padding:16px 18px;margin-bottom:18px;background:#f7f7f4">
+            <h3 style="margin:0 0 8px;font-size:15px">行程摘要</h3>
+            <p style="margin:0 0 8px">選中 <strong>${planState.order.length}</strong> 站，預計 <strong>${Math.round(planState.planned)}</strong> 分鐘（實際範圍 ${Math.round(planState.range[0])}–${Math.round(planState.range[1])} 分鐘）${restCount ? `，中途休息 ${restCount} 次` : ''}${mealCount ? '，含用餐時段' : ''}。</p>
+            ${dropped.length ? `<p style="margin:0 0 8px">時間不足，未納入：${dropped.map(escapeHtml).join('、')}。</p>` : ''}
+            ${warningRows ? `<ul style="margin:0 0 8px;padding-left:18px">${warningRows}</ul>` : ''}
+            ${excludedRows ? `<details style="margin-top:6px"><summary style="cursor:pointer">因你的感官設定排除 ${planState.excluded.length} 站</summary><ul style="margin:8px 0 0;padding-left:18px">${excludedRows}</ul></details>` : ''}
+          </div>`;
+      }
       function validate() {
         if (step === 0 && state.triggers.length === 0) return '請選擇最少一項，或選擇「我未確定」。';
         if (step === 5 && (!state.duration || !state.rest)) return '請選擇逗留時間及休息頻率。';
@@ -619,18 +700,18 @@
             <div class="ig-facility-head"><div><p class="ig-facility-name">${name}</p><span class="ig-facility-area">${areaMap[name]}・${facilityData[name].duration}</span></div>
             <button type="button" class="ig-facility-toggle" data-facility="${name}" aria-pressed="${active}">${active ? '✓ 已加入' : '＋ 加入路線'}</button></div>
             <div class="ig-sensory-row">${sensoryBadges(name)}</div>
+            ${planState && planState.excluded && planState.excluded.some(x=>x.name===name) ? `<div class="ig-inline-note" style="margin-top:8px">已排除：${escapeHtml(planState.excluded.find(x=>x.name===name).reason)}</div>` : ''}
           </article>`;
         }).join('');
         grid.querySelectorAll('[data-facility]').forEach(btn => btn.addEventListener('click', () => {
           const name = btn.dataset.facility, i = routeFacilities.indexOf(name);
           i >= 0 ? routeFacilities.splice(i,1) : routeFacilities.push(name);
-          routeFacilities.sort((a,b)=>facilityData[a].rank-facilityData[b].rank);
-          renderMatched(); renderMap(); renderGuide(); updateResultCount();
+          refreshPlanAndRender();
           if (globalThis.lucide) lucide.createIcons({attrs:{width:16,height:16}});
         }));
       }
       function renderMap() {
-        const ordered = routeFacilities.slice().sort((a,b)=>facilityData[a].rank-facilityData[b].rank);
+        const ordered = plannedNames();
         const coords = [[535,1510], ...ordered.map(name=>facilityData[name].point)];
         const points = coords.map(p=>p.join(',')).join(' ');
         const pins = coords.map((p,i)=>`<circle class="ig-map-pin" cx="${p[0]}" cy="${p[1]}" r="20"></circle><text class="ig-map-pin-text" x="${p[0]}" y="${p[1]+1}">${i}</text>`).join('');
@@ -654,7 +735,7 @@
       }
       function renderGuide() {
         root.querySelector('#ig-checklist').innerHTML = checklistItems().map(x=>`<div class="ig-check"><i data-lucide="${x[0]}" aria-hidden="true"></i><span>${x[1]}</span></div>`).join('');
-        const stories = routeFacilities.map((name,i)=>{
+        const stories = plannedNames().map((name,i)=>{
           const d=facilityData[name];
           return `<details class="ig-story" ${i===0?'open':''}><summary><span class="ig-route-number">${i+1}</span><span>${name}・${areaMap[name]}</span></summary><div class="ig-story-body">
             <div class="ig-story-images"><div class="ig-story-image"><span><i data-lucide="image" aria-hidden="true"></i>入口真實照片</span></div><div class="ig-story-image"><span><i data-lucide="image" aria-hidden="true"></i>內部環境照片</span></div></div>
@@ -672,7 +753,7 @@
         return answerLabels[group]?.[value] || value || '未選擇';
       }
       function buildPersonalizedDocument() {
-        const ordered = routeFacilities.slice().sort((a,b)=>facilityData[a].rank-facilityData[b].rank);
+        const ordered = plannedNames();
         const triggerText = state.triggers.map(value=>answerText('triggers',value)).join('、') || '未選擇';
         const mealEnvironment = state.mealEnv.map(value=>answerText('mealEnv',value)).join('、') || '沒有特別選擇';
         const created = new Intl.DateTimeFormat('zh-HK',{year:'numeric',month:'long',day:'numeric'}).format(new Date());
@@ -727,9 +808,10 @@
         if (view === 'map') renderMap();
         if (globalThis.lucide) lucide.createIcons({attrs:{width:16,height:16}});
       }
-      function showResult() {
+      async function showResult() {
         matchedFacilities = selectedFacilities().sort((a,b)=>facilityData[a].rank-facilityData[b].rank);
         routeFacilities = matchedFacilities.slice();
+        await requestPlan();
         root.querySelector('#ig-form-area').style.display = 'none';
         root.querySelector('#ig-result').classList.add('is-visible');
         root.querySelector('#ig-side-title').innerHTML = '你的個人化<br><span>行程已準備</span>';

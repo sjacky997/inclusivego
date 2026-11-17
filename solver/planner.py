@@ -45,6 +45,7 @@ class Preferences:
     rest_interval: int = 45            # 0 代表不需要
     priority: str = "low-stimulation"  # low-stimulation | less-walking | more-interest
     meal: str = "none"
+    zone_walk: int = WALK_BETWEEN_ZONES_MIN   # 跨區步行假設值，可調做敏感度分析
 
     def validate(self) -> None:
         if self.budget_min < 30:
@@ -55,6 +56,8 @@ class Preferences:
             raise ValueError(f"未知的 priority：{self.priority}")
         if self.meal not in MEAL_MINUTES:
             raise ValueError(f"未知的 meal：{self.meal}")
+        if not 0 <= self.zone_walk <= 60:
+            raise ValueError(f"跨區步行時間應在 0–60 分鐘之間，收到 {self.zone_walk}")
         unknown = [t for t in self.triggers if t not in DIMS]
         if unknown:
             raise ValueError(f"未知的感官維度：{unknown}")
@@ -67,6 +70,7 @@ class Stop:
     zone: str
     minutes: float
     score: float
+    walk_min: int = 0
     reason: str = ""
     excluded: bool = False
     exclude_reason: str = ""
@@ -79,6 +83,7 @@ class Plan:
     total_min: float = 0.0
     total_max: float = 0.0
     planned_min: float = 0.0
+    walk_min: float = 0.0
     warnings: list[str] = field(default_factory=list)
     excluded: list[dict] = field(default_factory=list)
     transitions: int = 0
@@ -97,6 +102,7 @@ class Plan:
             ],
             "breaks": self.breaks,
             "planned_minutes": round(self.planned_min, 1),
+            "walk_minutes": round(self.walk_min, 1),
             "duration_range": [round(self.total_min, 1), round(self.total_max, 1)],
             "warnings": self.warnings,
             "excluded": self.excluded,
@@ -153,6 +159,7 @@ def build_candidates(facilities: list[dict], prefs: Preferences) -> dict[str, li
                     minutes=expected_minutes(item), score=0.0,
                     excluded=True,
                     exclude_reason="；".join(hits) + " 超出可接受門檻",
+                    walk_min=item.get("walk_min", 0),
                 ))
                 continue
 
@@ -160,6 +167,7 @@ def build_candidates(facilities: list[dict], prefs: Preferences) -> dict[str, li
             id=item["id"], name=item["name"], zone=zone,
             minutes=expected_minutes(item),
             score=_score(item, prefs),
+            walk_min=item.get("walk_min", 0),
         ))
     return by_zone
 
@@ -184,11 +192,14 @@ def _zone_options(stops: list[Stop], prefs: Preferences) -> dict[int, tuple[int,
     for mask in range(1, 1 << len(pool)):
         minutes = 0
         score = 0.0
+        walk = 0
         for bit, index in enumerate(pool):
             if mask >> bit & 1:
                 minutes += int(round(usable[index].minutes))
                 score += usable[index].score
-        raw[(minutes, round(score, 3))] = mask
+                walk = max(walk, usable[index].walk_min)
+        # 區內按固定動線走，走到最深一站即已步行完該區
+        raw[(minutes + walk, round(score, 3))] = mask
 
     points = sorted(raw, key=lambda p: (p[0], -p[1]))
     kept: list[tuple[int, float]] = []
@@ -212,10 +223,12 @@ def _dp_choose(by_zone: dict[str, list[Stop]], prefs: Preferences) -> tuple[list
         options = _zone_options(stops, prefs)
         if not options:
             continue
-        next_dp: dict[int, tuple[float, dict[str, int]]] = {}
+        # 允許跳過整區：先把「不進這一區」的既有狀態帶進來，
+        # 否則後段區域放不下時，先前找到的可行路線會一併消失（曾導致 0 站）。
+        next_dp: dict[int, tuple[float, dict[str, int]]] = dict(dp)
         for used, (score, chosen) in dp.items():
             for (minutes, gain), mask in options.items():
-                walk = WALK_BETWEEN_ZONES_MIN if mask else 0
+                walk = prefs.zone_walk if chosen else 0
                 total = used + minutes + walk
                 transitions += 1
                 if total > prefs.budget_min - _fixed_reserve(prefs):
@@ -248,6 +261,16 @@ def _dp_choose(by_zone: dict[str, list[Stop]], prefs: Preferences) -> tuple[list
             if mask >> bit & 1:
                 chosen_stops.append(stop)
     return chosen_stops, [], transitions
+
+
+def walk_minutes(stops: list[Stop], zone_walk: int = WALK_BETWEEN_ZONES_MIN) -> float:
+    """各區走到最深一站的累計步行，加上跨區轉移（zone_walk 為假設值，可調）。"""
+    if not stops:
+        return 0.0
+    deepest: dict[str, int] = {}
+    for stop in stops:
+        deepest[stop.zone] = max(deepest.get(stop.zone, 0), stop.walk_min)
+    return float(sum(deepest.values()) + zone_walk * (len(deepest) - 1))
 
 
 def _fixed_reserve(prefs: Preferences) -> int:
@@ -314,7 +337,8 @@ def plan(payload: dict, prefs: Preferences) -> Plan:
 
     blocks = insert_breaks(chosen, prefs)
     break_minutes = sum(b["minutes"] for b in blocks)
-    planned = total_expected + break_minutes
+    walk = walk_minutes(chosen, prefs.zone_walk)
+    planned = total_expected + break_minutes + walk
 
     # 硬約束：插休息/用餐後仍須在預算內，超出則由隊尾移除
     while planned > prefs.budget_min and len(chosen) > 1:
@@ -323,10 +347,12 @@ def plan(payload: dict, prefs: Preferences) -> Plan:
         total_expected = sum(s.minutes for s in chosen)
         blocks = insert_breaks(chosen, prefs)
         break_minutes = sum(b["minutes"] for b in blocks)
-        planned = total_expected + break_minutes
+        walk = walk_minutes(chosen, prefs.zone_walk)
+        planned = total_expected + break_minutes + walk
 
     result.stops = sorted(chosen, key=lambda s: (ZONE_ORDER.index(s.zone), -s.score, s.id))
     result.planned_min = planned
+    result.walk_min = walk
     result.total_min = sum(items[s.id]["duration"]["min"] for s in result.stops)
     result.total_max = sum(items[s.id]["duration"]["max"] for s in result.stops)
     result.breaks = blocks
@@ -353,6 +379,7 @@ def parse_args(argv: Iterable[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--rest", type=int, default=45, help="休息間隔（分鐘），0 代表不需要")
     parser.add_argument("--priority", default="low-stimulation", choices=["low-stimulation", "less-walking", "more-interest"])
     parser.add_argument("--meal", default="none", choices=list(MEAL_MINUTES))
+    parser.add_argument("--zone-walk", type=int, default=WALK_BETWEEN_ZONES_MIN, help="跨區步行分鐘（假設值，預設 8）")
     parser.add_argument("--json", action="store_true", help="輸出 JSON")
     return parser.parse_args(list(argv) if argv is not None else None)
 
@@ -366,6 +393,7 @@ def main(argv: Iterable[str] | None = None) -> int:
         rest_interval=args.rest,
         priority=args.priority,
         meal=args.meal,
+        zone_walk=args.zone_walk,
     )
     payload = load_facilities()
     result = plan(payload, prefs)
@@ -375,7 +403,7 @@ def main(argv: Iterable[str] | None = None) -> int:
         return 0
 
     print(f"預算 {prefs.budget_min} 分鐘｜避開 {prefs.triggers or '無'}｜{prefs.handling}｜休息每 {prefs.rest_interval} 分鐘")
-    print(f"選中 {len(result.stops)} 站，預計 {int(result.planned_min)} 分鐘（範圍 {int(result.total_min)}-{int(result.total_max)}）")
+    print(f"選中 {len(result.stops)} 站，預計 {int(result.planned_min)} 分鐘（停留範圍 {int(result.total_min)}-{int(result.total_max)}，步行 {int(result.walk_min)} 分鐘）")
     print("")
     for index, stop in enumerate(result.stops, 1):
         print(f"{index:>2}. [{stop.zone}] {stop.name}　{int(round(stop.minutes))} 分鐘")

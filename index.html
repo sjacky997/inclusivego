@@ -628,6 +628,7 @@
           planState = {
             order: data.stops.map(stop => stop.name),
             planned: data.planned_minutes,
+            walk: data.walk_minutes || 0,
             range: data.duration_range,
             warnings: data.warnings || [],
             excluded: (data.excluded || []).filter(item => payload.candidates.includes(item.name)),
@@ -635,7 +636,7 @@
           };
         } catch (err) {
           console.error('[InclusiveGo] 求解器未能連線，改用舊次序', err);
-          planState = { error: true, order: [], planned: null, range: null, warnings: [], excluded: [], breaks: [] };
+          planState = { error: true, order: [], planned: null, walk: 0, range: null, warnings: [], excluded: [], breaks: [] };
         }
         renderPlanSummary();
       }
@@ -675,9 +676,11 @@
         const mealBlocks = planState.breaks.filter(b => b.type === 'meal');
         const restMinutes = restBlocks.reduce((sum, b) => sum + b.minutes, 0);
         const mealMinutes = mealBlocks.reduce((sum, b) => sum + b.minutes, 0);
-        const stopsMinutes = Math.round(planState.planned - restMinutes - mealMinutes);
-        const rangeText = planState.range ? `（不含休息；實際範圍 ${Math.round(planState.range[0])}–${Math.round(planState.range[1])} 分鐘）` : '（不含休息）';
-        const segments = [`預計 <strong>${stopsMinutes}</strong> 分鐘${rangeText}`];
+        const walkMinutes = Math.round(planState.walk || 0);
+        const stopsMinutes = Math.round(planState.planned - restMinutes - mealMinutes - walkMinutes);
+        const rangeText = planState.range ? `（實際範圍 ${Math.round(planState.range[0])}–${Math.round(planState.range[1])} 分鐘）` : '';
+        const segments = [`停留 <strong>${stopsMinutes}</strong> 分鐘${rangeText}`];
+        if (walkMinutes) segments.push(`步行 <strong>${walkMinutes}</strong> 分鐘`);
         if (restMinutes) segments.push(`休息 <strong>${restMinutes}</strong> 分鐘（${restBlocks.length} 次）`);
         if (mealMinutes) segments.push(`用餐 <strong>${mealMinutes}</strong> 分鐘`);
         const totalMinutes = Math.round(planState.planned);

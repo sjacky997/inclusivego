@@ -130,6 +130,66 @@ class TestBreaks(unittest.TestCase):
             self.assertFalse(meal_blocks)
 
 
+class TestWalkTime(unittest.TestCase):
+    """walk_min 進資料契約後，步行時間必須真的計入總時長，且可追溯到每一區。"""
+
+    def test_every_facility_declares_walk_min(self):
+        for item in FACILITIES:
+            self.assertIn("walk_min", item, f"{item['name']} 缺 walk_min")
+            self.assertIsInstance(item["walk_min"], int)
+            self.assertGreaterEqual(item["walk_min"], 0)
+            self.assertLessEqual(item["walk_min"], 15)
+
+    def test_walk_min_grows_along_zone_order(self):
+        for zone in ZONE_ORDER:
+            ordered = sorted([f for f in FACILITIES if f["zone"] == zone], key=lambda f: f["legacy_rank"])
+            values = [f["walk_min"] for f in ordered]
+            self.assertEqual(values, sorted(values), f"{zone} 的 walk_min 應隨動線遞增")
+
+    def test_walk_minutes_match_deepest_stop_per_zone(self):
+        result = plan(DATA, Preferences(budget_min=240, triggers=("sound",), rest_interval=0))
+        deepest = {}
+        for stop in result.stops:
+            deepest[stop.zone] = max(deepest.get(stop.zone, 0), BY_ID[stop.id]["walk_min"])
+        expected = sum(deepest.values()) + 8 * (len(deepest) - 1)
+        self.assertAlmostEqual(result.walk_min, expected, delta=0.01)
+        self.assertEqual(result.to_dict()["walk_minutes"], expected)
+
+    def test_planned_minutes_include_walk(self):
+        result = plan(DATA, Preferences(budget_min=240, triggers=("sound",), rest_interval=45))
+        stops_min = sum(expected_minutes(BY_ID[s.id]) for s in result.stops)
+        breaks_min = sum(b["minutes"] for b in result.breaks)
+        self.assertAlmostEqual(result.planned_min, stops_min + breaks_min + result.walk_min, delta=1.0)
+
+    def test_farther_route_never_walks_less(self):
+        near = plan(DATA, Preferences(budget_min=120, triggers=(), rest_interval=0))
+        far = plan(DATA, Preferences(budget_min=600, triggers=(), rest_interval=0))
+        self.assertGreater(far.walk_min, near.walk_min)
+
+
+class TestZoneWalkSensitivity(unittest.TestCase):
+    """跨區步行是假設值，必須可調；調大只會拉長總時長，不會縮短。"""
+
+    def test_zone_walk_changes_walk_minutes(self):
+        base = Preferences(budget_min=600, triggers=(), rest_interval=0, zone_walk=8)
+        slow = Preferences(budget_min=600, triggers=(), rest_interval=0, zone_walk=12)
+        fast = Preferences(budget_min=600, triggers=(), rest_interval=0, zone_walk=4)
+        here = plan(DATA, base)
+        slower = plan(DATA, slow)
+        quicker = plan(DATA, fast)
+        zones = len({s.zone for s in here.stops})
+        delta = 4 * (zones - 1)
+        self.assertAlmostEqual(slower.walk_min, here.walk_min + delta, delta=0.01)
+        self.assertAlmostEqual(quicker.walk_min, here.walk_min - delta, delta=0.01)
+        self.assertGreater(slower.planned_min, here.planned_min)
+
+    def test_zone_walk_out_of_range_rejected(self):
+        with self.assertRaises(ValueError):
+            plan(DATA, Preferences(zone_walk=-3))
+        with self.assertRaises(ValueError):
+            plan(DATA, Preferences(zone_walk=99))
+
+
 class TestEdgeCases(unittest.TestCase):
     def test_invalid_handling_rejected(self):
         with self.assertRaises(ValueError):

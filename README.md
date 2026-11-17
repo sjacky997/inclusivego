@@ -86,6 +86,29 @@ python3 -m unittest discover -s tests -v
 
 實測：p95 延遲 0.3 毫秒，跨區動態規劃轉移 75 次。
 
+## 前端如何取得路線
+
+`serve.py` 提供 `POST /api/plan`，頁面不再自行排序，只負責顯示求解結果。
+
+```
+POST /api/plan
+{
+  "budget_min": 240,
+  "triggers": ["sound", "crowd"],
+  "handling": "avoid-high",
+  "rest_interval": 45,
+  "priority": "low-stimulation",
+  "meal": "snack",
+  "candidates": ["鱷園", "樹懶與好友", "..."]
+}
+```
+
+回應包含 `stops`（含每站理由）、`breaks`、`planned_minutes`、`duration_range`、`warnings`、`excluded`。
+
+前端行為：提交問卷後自動請求路線；切換景點會重新求解；摘要卡顯示選中站數、預計分鐘、休息次數、未納入清單與排除原因。若未以 `serve.py` 啟動（例如直接雙擊 `index.html`），會顯示提示並暫時按舊次序排列。
+
+測試：`python3 -m unittest discover -s tests -v`（24 條，含端點測試）。
+
 ## 常見問題
 
 **`pip: command not found`**：用 `python3 -m pip`，或建虛擬環境 `python3 -m venv .venv && source .venv/bin/activate`。

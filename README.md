@@ -90,6 +90,8 @@ python3 -m unittest discover -s tests -v
 
 感官門檻的判準與改動理由見 [`docs/sensory-rubric.md`](docs/sensory-rubric.md)；一鍵重現（驗證＋測試＋固定輸入雜湊＋前端語法）跑 `bash scripts/reproduce.sh`。
 
+感官估值有多不確定、哪幾格在支撐路線，跑 `python3 scripts/sim_sensory.py`；結果寫在 [`docs/sensory-robustness.md`](docs/sensory-robustness.md)。
+
 ## 前端如何取得路線
 
 `serve.py` 提供 `POST /api/plan`，頁面不再自行排序，只負責顯示求解結果。

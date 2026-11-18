@@ -52,7 +52,12 @@
   .story{font-size:13px;color:#3a4a45;background:var(--green-soft);
     border-left:3px solid var(--green);padding:9px 12px;border-radius:0 6px 6px 0;margin:10px 0}
   .story b{display:block;color:var(--green);font-size:12px;margin-bottom:2px}
-  .legend{display:flex;gap:14px;align-items:center;color:var(--muted);font-size:12px;margin-top:4px}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;align-items:center;color:var(--muted);font-size:12px;margin-top:6px}
+  .badge text{pointer-events:none}
+  .ring5{fill:none;stroke:var(--l5);stroke-width:2;stroke-dasharray:2 4}
+  .ring3{fill:none;stroke:var(--l3);stroke-width:2;stroke-dasharray:6 5}
+  .frag{background:#fdf3f2;border-left:3px solid var(--l5);padding:9px 12px;border-radius:0 6px 6px 0;margin:10px 0;font-size:12.5px;color:#3a2b2a}
+  .frag b{display:block;color:var(--l5);font-size:12px;margin-bottom:4px}
   .dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:-1px}
   footer{color:var(--muted);font-size:12px;padding:14px 28px 26px;border-top:1px solid var(--line);background:#fff}
   @media (max-width:900px){.wrap{grid-template-columns:1fr}.mapbox{border-right:0;border-bottom:1px solid var(--line)}}
@@ -61,7 +66,7 @@
 <body>
 <header>
   <h1>InclusiveGo 感官示意地圖</h1>
-  <div class="sub">17 個站點 · 四區 · 感官值 1–5，數值越低越適合感官敏感旅客。點擊站點查看細節。</div>
+  <div class="sub">17 個站點 · 四區 · 感官值 1–5，數值越低越適合感官敏感旅客。點擊站點查看細節；站點旁的 ×1／×2 表示該站有幾個脆弱格（一偏一級就翻轉的格子）。</div>
 </header>
 
 <div class="wrap">
@@ -77,6 +82,8 @@
       <span><i class="dot" style="background:var(--l3)"></i>3 中</span>
       <span><i class="dot" style="background:var(--l5)"></i>4–5 高</span>
       <span>虛線＝按分區順序的示意動線，非實際步行路徑</span>
+      <span><b style="color:var(--l5)">×2</b>＝脆弱格數量（僅總覽時顯示，2 個代表該站有兩格一偏就翻轉）</span>
+      <span>外環＝該維度下的脆弱格（紅＝值 5，降一級即納入；琥珀＝值 3，升一級即排除）</span>
     </div>
   </div>
   <aside id="panel">
@@ -93,6 +100,7 @@
 
 <script>
 const STATIONS = [{"id":"crocodile_park","name":"鱷園","zone":"正門外","duration":{"min":10,"max":15,"approx":false},"sensory":{"sound":1,"light":3,"crowd":1,"enclosed":3,"smell":1,"cold":3,"wet":1,"motion":1},"story":{"experience":"我會進入一個較小的動物展館。鱷魚可能不移動，或暫時不在視線內。","prep":"我可以戴帽和太陽眼鏡，亦可以使用「可能改變」提示卡。"},"point":{"x":540,"y":1460,"map_ref":"waterfront-base-1"},"access":{"step_free":null,"quiet_room":null,"queue_required":null,"exit_ease":null,"staff_interaction":null},"walk_min":1},{"id":"grand_aquarium","name":"海洋奇觀","zone":"夢幻水都","duration":{"min":35,"max":45,"approx":false},"sensory":{"sound":3,"light":5,"crowd":5,"enclosed":3,"smell":1,"cold":3,"wet":3,"motion":1},"story":{"experience":"我會由明亮的戶外進入較暗的展館。魚缸很光亮，附近可能有人聲、水聲和較多人。","prep":"我可以預先戴好耳罩，慢慢讓眼睛適應，帶薄外套並穿防滑鞋。"},"point":{"x":956,"y":1000,"map_ref":"waterfront-base-1"},"access":{"step_free":null,"quiet_room":null,"queue_required":null,"exit_ease":null,"staff_interaction":null},"walk_min":2},{"id":"water_world","name":"環迴水世界","zone":"夢幻水都","duration":{"min":5,"max":10,"approx":false},"sensory":{"sound":5,"light":5,"crowd":3,"enclosed":3,"smell":1,"cold":1,"wet":1,"motion":5},"story":{"experience":"我會聽到音樂和機械聲，看到鮮明顏色；設施會持續旋轉。","prep":"我可以先觀看完整一輪，再決定乘坐、只觀看或略過。"},"point":{"x":525,"y":758,"map_ref":"waterfront-base-1"},"access":{"step_free":null,"quiet_room":null,"queue_required":null,"exit_ease":null,"staff_interaction":null},"walk_min":6},{"id":"old_hong_kong","name":"香港老大街","zone":"夢幻水都","duration":{"min":20,"max":30,"approx":false},"sensory":{"sound":5,"light":3,"crowd":5,"enclosed":3,"smell":5,"cold":1,"wet":3,"motion":1},"story":{"experience":"我可能同時聽到音樂和人聲，也可能聞到食物氣味。繁忙時通道會較多人。","prep":"我可以使用耳罩或平日使用的口罩，並預先找出出口。"},"point":{"x":428,"y":785,"map_ref":"waterfront-base-1"},"access":{"step_free":null,"quiet_room":null,"queue_required":null,"exit_ease":null,"staff_interaction":null},"walk_min":7},{"id":"sichuan_treasures","name":"香港賽馬會四川奇珍館","zone":"夢幻水都","duration":{"min":20,"max":30,"approx":false},"sensory":{"sound":1,"light":3,"crowd":5,"enclosed":3,"smell":1,"cold":3,"wet":1,"motion":1},"story":{"experience":"館內通常有冷氣。熱門時可能突然多人，動物亦可能正在休息。","prep":"我可以帶薄外套和轉變卡；人多時先到其他景點。"},"point":{"x":875,"y":790,"map_ref":"waterfront-base-1"},"access":{"step_free":null,"quiet_room":null,"queue_required":null,"exit_ease":null,"staff_interaction":null},"walk_min":11},{"id":"sloth_and_friends","name":"樹懶與好友","zone":"夢幻水都","duration":{"min":20,"max":30,"approx":false},"sensory":{"sound":3,"light":3,"crowd":3,"enclosed":3,"smell":3,"cold":3,"wet":1,"motion":1},"story":{"experience":"室內可能有動物氣味、解說聲和互動活動，動物動作未必可以預計。","prep":"我可以先在入口觀察，使用耳罩或口罩，亦可只觀看而不互動。"},"point":{"x":492,"y":750,"map_ref":"waterfront-base-1"},"access":{"step_free":null,"quiet_room":null,"queue_required":null,"exit_ease":null,"staff_interaction":null},"walk_min":14},{"id":"panda_adventure","name":"大熊貓之旅","zone":"亞洲動物天地","duration":{"min":30,"max":40,"approx":false},"sensory":{"sound":3,"light":3,"crowd":5,"enclosed":3,"smell":1,"cold":3,"wet":1,"motion":1},"story":{"experience":"我可能需要跟隨職員分流。熊貓可能睡覺或暫時離開視線。","prep":"我可以預先知道動物未必出現，並保留其他動物展館作替代。"},"point":{"x":507,"y":520,"map_ref":"waterfront-base-1"},"access":{"step_free":null,"quiet_room":null,"queue_required":null,"exit_ease":null,"staff_interaction":null},"walk_min":2},{"id":"local_stream_ecology","name":"本地河溪生態館","zone":"亞洲動物天地","duration":{"min":15,"max":20,"approx":false},"sensory":{"sound":1,"light":3,"crowd":1,"enclosed":3,"smell":1,"cold":3,"wet":3,"motion":1},"story":{"experience":"這是一個較短的室內展館，我會看到水流和小動物。地面可能潮濕。","prep":"我可以帶薄外套、穿防滑鞋；需要時可較快離開。"},"point":{"x":566,"y":490,"map_ref":"waterfront-base-1"},"access":{"step_free":null,"quiet_room":null,"queue_required":null,"exit_ease":null,"staff_interaction":null},"walk_min":3},{"id":"whiskers_herb_garden","name":"威威百草谷","zone":"亞洲動物天地","duration":{"min":10,"max":15,"approx":false},"sensory":{"sound":1,"light":5,"crowd":1,"enclosed":1,"smell":3,"cold":1,"wet":3,"motion":1},"story":{"experience":"這是戶外植物區，可能有強烈陽光、花草氣味和雨後濕地。","prep":"我可以帶帽、太陽眼鏡和水，並穿防滑鞋。"},"point":{"x":496,"y":447,"map_ref":"waterfront-base-1"},"access":{"step_free":null,"quiet_room":null,"queue_required":null,"exit_ease":null,"staff_interaction":null},"walk_min":4},{"id":"herb_trail","name":"百草生態徑","zone":"亞洲動物天地","duration":{"min":15,"max":20,"approx":false},"sensory":{"sound":1,"light":5,"crowd":1,"enclosed":1,"smell":3,"cold":1,"wet":3,"motion":1},"story":{"experience":"我會在戶外步行，陽光、溫度和天氣可能改變。","prep":"我可以把這裡當作調節站，按需要停下、縮短或返回主路。"},"point":{"x":833,"y":525,"map_ref":"waterfront-base-1"},"access":{"step_free":null,"quiet_room":null,"queue_required":null,"exit_ease":null,"staff_interaction":null},"walk_min":7},{"id":"meerkat_tortoise_journey","name":"小狐獴與大象龜之旅","zone":"威威天地","duration":{"min":20,"max":30,"approx":false},"sensory":{"sound":3,"light":3,"crowd":3,"enclosed":3,"smell":3,"cold":1,"wet":1,"motion":1},"story":{"experience":"我會看到動物和五感互動遊戲，也可能聽到兒童聲。","prep":"我可以使用耳罩，並選擇只觀看動物而不參與互動。"},"point":{"x":623,"y":205,"map_ref":"waterfront-base-1"},"access":{"step_free":null,"quiet_room":null,"queue_required":null,"exit_ease":null,"staff_interaction":null},"walk_min":2},{"id":"choo_choo_train","name":"砵砵火車頭","zone":"威威天地","duration":{"min":5,"max":10,"approx":false},"sensory":{"sound":5,"light":5,"crowd":3,"enclosed":3,"smell":1,"cold":1,"wet":1,"motion":3},"story":{"experience":"我可能聽到鈴聲、機械聲和兒童聲；火車會沿固定路線移動。","prep":"我可以先觀看一次運作，戴耳罩，再決定是否乘坐。"},"point":{"x":564,"y":345,"map_ref":"waterfront-base-1"},"access":{"step_free":null,"quiet_room":null,"queue_required":null,"exit_ease":null,"staff_interaction":null},"walk_min":3},{"id":"carousel","name":"幻彩旋轉馬","zone":"威威天地","duration":{"min":5,"max":10,"approx":false},"sensory":{"sound":5,"light":5,"crowd":3,"enclosed":3,"smell":1,"cold":1,"wet":1,"motion":3},"story":{"experience":"音樂、鮮明顏色和旋轉會持續出現。","prep":"我可以先觀看一輪，選擇較穩定座位，或不乘坐。"},"point":{"x":579,"y":294,"map_ref":"waterfront-base-1"},"access":{"step_free":null,"quiet_room":null,"queue_required":null,"exit_ease":null,"staff_interaction":null},"walk_min":3},{"id":"little_bear_fortress","name":"小紅熊堡壘","zone":"威威天地","duration":{"min":10,"max":15,"approx":false},"sensory":{"sound":5,"light":3,"crowd":5,"enclosed":5,"smell":1,"cold":1,"wet":1,"motion":3},"story":{"experience":"我會遇到較窄的秘道、攀爬活動，以及其他兒童跑動或喊叫。","prep":"我可以先找出出口和集合點；不舒服時可以略過。"},"point":{"x":740,"y":252,"map_ref":"waterfront-base-1"},"access":{"step_free":null,"quiet_room":null,"queue_required":null,"exit_ease":null,"staff_interaction":null},"walk_min":4},{"id":"sky_adventure","name":"昇空奇遇","zone":"威威天地","duration":{"min":5,"max":10,"approx":false},"sensory":{"sound":5,"light":5,"crowd":3,"enclosed":3,"smell":1,"cold":1,"wet":1,"motion":5},"story":{"experience":"我會感到升降或旋轉，並聽到機械啟停聲。乘坐途中不能隨時離開。","prep":"我可以觀看完整一輪，確認自己願意後才乘坐。"},"point":{"x":802,"y":265,"map_ref":"waterfront-base-1"},"access":{"step_free":null,"quiet_room":null,"queue_required":null,"exit_ease":null,"staff_interaction":null},"walk_min":5},{"id":"gigas_jungle","name":"喜寶 呈獻 巨人森林","zone":"威威天地","duration":{"min":15,"max":25,"approx":false},"sensory":{"sound":5,"light":5,"crowd":5,"enclosed":3,"smell":1,"cold":1,"wet":3,"motion":5},"story":{"experience":"這裡有攀爬、滑梯、戶外陽光及較多兒童聲。雨後地面可能濕滑。","prep":"我可以戴耳罩和帽、穿防滑鞋，活動後安排休息。"},"point":{"x":801,"y":304,"map_ref":"waterfront-base-1"},"access":{"step_free":null,"quiet_room":null,"queue_required":null,"exit_ease":null,"staff_interaction":null},"walk_min":5},{"id":"exploration_r","name":"探索號 R","zone":"威威天地","duration":{"min":40,"max":50,"approx":true},"sensory":{"sound":5,"light":5,"crowd":3,"enclosed":3,"smell":1,"cold":3,"wet":1,"motion":3},"story":{"experience":"我會看到屏幕和互動科技，聽到聲效，流程亦比較長。","prep":"我可以使用耳罩、帶薄外套，並預先知道退出方法。"},"point":{"x":844,"y":283,"map_ref":"waterfront-base-1"},"access":{"step_free":null,"quiet_room":null,"queue_required":null,"exit_ease":null,"staff_interaction":null},"walk_min":5}];
+const FRAGILE = {"note":"由 scripts/fragile_cells.py 重算生成，勿手改；來源為 sim_sensory.oat 的單格擾動。","cells_total":136,"fragile_cells":12,"fragile_stations":10,"cells":[{"id":"carousel","station":"幻彩旋轉馬","dim":"sound","value":5,"scenarios":["半日/避免高","全日/避免高"],"relax_flips":true,"tighten_flips":false},{"id":"choo_choo_train","station":"砵砵火車頭","dim":"sound","value":5,"scenarios":["半日/避免高","全日/避免高"],"relax_flips":true,"tighten_flips":false},{"id":"exploration_r","station":"探索號 R","dim":"sound","value":5,"scenarios":["全日/避免高"],"relax_flips":true,"tighten_flips":false},{"id":"grand_aquarium","station":"海洋奇觀","dim":"crowd","value":5,"scenarios":["半日/避免高","全日/避免高"],"relax_flips":true,"tighten_flips":false},{"id":"meerkat_tortoise_journey","station":"小狐獴與大象龜之旅","dim":"crowd","value":3,"scenarios":["半日/避免中以上"],"relax_flips":false,"tighten_flips":true},{"id":"meerkat_tortoise_journey","station":"小狐獴與大象龜之旅","dim":"sound","value":3,"scenarios":["半日/避免中以上"],"relax_flips":false,"tighten_flips":true},{"id":"panda_adventure","station":"大熊貓之旅","dim":"crowd","value":5,"scenarios":["半日/避免高","全日/避免高"],"relax_flips":true,"tighten_flips":false},{"id":"sichuan_treasures","station":"香港賽馬會四川奇珍館","dim":"crowd","value":5,"scenarios":["2h/避免高","半日/避免高","全日/避免高"],"relax_flips":true,"tighten_flips":false},{"id":"sky_adventure","station":"昇空奇遇","dim":"sound","value":5,"scenarios":["半日/避免高","全日/避免高"],"relax_flips":true,"tighten_flips":false},{"id":"sloth_and_friends","station":"樹懶與好友","dim":"crowd","value":3,"scenarios":["半日/避免中以上"],"relax_flips":false,"tighten_flips":true},{"id":"sloth_and_friends","station":"樹懶與好友","dim":"sound","value":3,"scenarios":["半日/避免中以上"],"relax_flips":false,"tighten_flips":true},{"id":"water_world","station":"環迴水世界","dim":"sound","value":5,"scenarios":["半日/避免高","全日/避免高"],"relax_flips":true,"tighten_flips":false}]};
 
 const DIMS = [
   ["sound","聲音"],["light","光線"],["crowd","人群"],["enclosed","封閉感"],
@@ -105,7 +113,14 @@ const ACCESS_LABEL = {
   exit_ease:"離場容易度", staff_interaction:"職員互動"
 };
 
-let dim = "sound";
+const CELLS_BY_STATION = {};
+FRAGILE.cells.forEach(c=>{
+  (CELLS_BY_STATION[c.id] = CELLS_BY_STATION[c.id] || []).push(c);
+});
+function cellsFor(id){ return CELLS_BY_STATION[id] || []; }
+function cellFor(id, d){ return cellsFor(id).find(c=>c.dim === d) || null; }
+
+let dim = null;   // 預設總覽：顯示八維最大值與脆弱格徽章；選定維度則切換為外環模式
 let onlyFive = false;
 let showRoute = false;
 let selected = null;
@@ -128,9 +143,9 @@ const LAYOUT = (()=>{
     const minY = Math.min(...pts.map(p=>p.point.y));
     const maxY = Math.max(...pts.map(p=>p.point.y));
     const span = Math.max(maxY - minY, 60);
-    const height = Math.max(126, pts.length * 34 + 58);
+    const height = Math.max(150, pts.length * 42 + 74);
     out[zone] = {top:y, height, minY, span, scale:(height - 58) / span};
-    y += height + 18;
+    y += height + 22;
   });
   out.__viewH = y + 20;
   return out;
@@ -167,8 +182,21 @@ function drawDims(){
   });
 }
 
+// 徽章避讓：三個候選位置，取第一個不與已放置徽章太近的
+const badgeSpots = [];
+function placeBadge(s){
+  const cy = fy(s);
+  const cands = [
+    {x:s.point.x+17, y:cy-15}, {x:s.point.x-17, y:cy-15}, {x:s.point.x+17, y:cy+16},
+  ];
+  const spot = cands.find(c=>!badgeSpots.some(b=>Math.abs(b.x-c.x)<26 && Math.abs(b.y-c.y)<20)) || cands[0];
+  badgeSpots.push(spot);
+  return spot;
+}
+
 function render(){
   svg.innerHTML = "";
+  badgeSpots.length = 0;
   svg.setAttribute("viewBox", `0 0 1180 ${LAYOUT.__viewH}`);
 
   // 區域色帶（帶狀佈局）
@@ -219,13 +247,31 @@ function render(){
     const g = el("g", {class:"node" + (selected === s.id ? " selected":""),
       "data-id": s.id});
     const cy = fy(s);
+    // A：當前維度下的脆弱格外環（只有選了具體維度才顯示）
+    const fcell = dim && selected !== s.id ? cellFor(s.id, dim) : null;
+    if (fcell){
+      g.appendChild(el("circle", {cx:s.point.x, cy, r:22,
+        class: fcell.value === 5 ? "ring5" : "ring3"}));
+    }
     g.appendChild(el("circle", {cx:s.point.x, cy, r:16,
       fill: colorFor(v), stroke:"#fff", "stroke-width":2}));
     const val = el("text", {x:s.point.x, y:cy+4.5, "text-anchor":"middle",
       style:"font-size:12px;fill:#fff;font-weight:600"});
     val.textContent = v;
     g.appendChild(val);
-    g.appendChild(el("title", {})).textContent = s.name + "｜" + s.zone;
+    // B：常駐徽章，只顯示「該站有幾個脆弱格」；篩選到只剩 5 級時關掉，避免與過濾結果打架
+    const cells = cellsFor(s.id);
+    if (!onlyFive && !dim && cells.length){
+      const spot = placeBadge(s);
+      const bg = el("g", {class:"badge"});
+      const bt = el("text", {x:spot.x, y:spot.y+4, "text-anchor":"middle",
+        style:"font-size:12px;font-weight:700;fill:var(--l5);paint-order:stroke;stroke:#fff;stroke-width:3px"});
+      bt.textContent = "×" + cells.length;
+      bg.appendChild(bt);
+      g.appendChild(bg);
+    }
+    g.appendChild(el("title", {})).textContent =
+      s.name + "｜" + s.zone + (cells.length ? "｜脆弱格 " + cells.length + " 個" : "｜無脆弱格");
     g.onclick = () => { selected = s.id; render(); renderPanel(s); };
     svg.appendChild(g);
   });
@@ -271,6 +317,27 @@ function bar(v){
   return `<span class="bar" style="width:${w}px;background:${v>=4?"var(--l5)":v>=3?"var(--l3)":"var(--l1)"}"></span>`;
 }
 
+function fragileHtml(s){
+  const cells = cellsFor(s.id);
+  if (!cells.length){
+    return `<div class="frag"><b>脆弱度</b>此站八維皆不在脆弱格清單：任何一格上下偏一級，都不改變它在四個情境下的納入結果。</div>`;
+  }
+  const rows = cells.map(c=>{
+    const dir = c.value === 5 ? "降一級即納入" : "升一級即排除";
+    return `<tr><td>${DIMS.find(d=>d[0]===c.dim)[1]}</td>
+      <td style="text-align:center">${c.value}</td>
+      <td>${dir}</td><td style="text-align:center">${c.scenarios.length}</td></tr>`;
+  }).join("");
+  const names = cells.map(c=>c.scenarios).flat();
+  const uniq = [...new Set(names)];
+  return `<div class="frag"><b>脆弱度：${cells.length} 個脆弱格</b>
+    <table style="margin:6px 0 6px"><thead><tr><th style="width:52px">維度</th><th style="width:40px;text-align:center">現值</th>
+    <th>方向</th><th style="width:44px;text-align:center">情境</th></tr></thead>
+    <tbody>${rows}</tbody></table>
+    涉及情境：${uniq.join("、")}。<br>
+    「脆弱」指決策餘量只剩一級，不是數據不確定度本身；現場量這一格就能消掉它的不確定性。</div>`;
+}
+
 function renderPanel(s){
   const rows = DIMS.map(([k,label])=>
     `<tr><td>${label}</td><td class="num">${s.sensory[k]}　${LEVEL_NAME[s.sensory[k]]}${bar(s.sensory[k])}</td></tr>`
@@ -288,6 +355,7 @@ function renderPanel(s){
     <div class="story"><b>我會經歷什麼</b>${s.story.experience}</div>
     <div class="story"><b>可以先準備</b>${s.story.prep}</div>
     <table><thead><tr><th>無障礙資訊</th><th>狀態</th></tr></thead><tbody>${accessRows}</tbody></table>
+    ${fragileHtml(s)}
     <div class="meta">無障礙五欄尚未現場採集，一律顯示「未確認」。這裡的「未確認」不是「可通行」。</div>
   `;
 }

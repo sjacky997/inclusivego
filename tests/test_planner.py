@@ -260,3 +260,50 @@ class TestSensoryThreshold(unittest.TestCase):
         self.assertGreater(len(result.stops), 0)
         for stop in result.stops:
             self.assertLessEqual(BY_ID[stop.id]["sensory"]["light"], 3)
+
+
+class TestHandlingSemantics(unittest.TestCase):
+    """鎖住 handling 的語義：decide-later 與 warn-only 選站相同，只差責任歸屬。
+
+    介面若把 decide-later 寫成「已幫你處理」或「每站提供 Plan B」，就與此處契約不符。
+    """
+
+    PREFS = dict(budget_min=240, triggers=("sound", "crowd"), rest_interval=45)
+
+    def _plan(self, handling):
+        return plan(DATA, Preferences(handling=handling, **self.PREFS))
+
+    def test_decide_later_selects_same_stops_as_warn_only(self):
+        a = self._plan("warn-only")
+        b = self._plan("decide-later")
+        self.assertEqual([s.id for s in a.stops], [s.id for s in b.stops])
+        self.assertEqual(a.planned_min, b.planned_min)
+
+    def test_decide_later_excludes_nothing(self):
+        result = self._plan("decide-later")
+        self.assertEqual(result.excluded, [], "decide-later 不得剔除任何站，剔除只由硬約束負責")
+
+    def test_decide_later_flags_without_excluding(self):
+        result = self._plan("decide-later")
+        flagged = [
+            s for s in result.stops
+            if any(BY_ID[s.id]["sensory"][d] >= 5 for d in self.PREFS["triggers"])
+        ]
+        self.assertTrue(flagged, "此情境應存在高刺激站，否則測試失去意義")
+        joined = "".join(result.warnings)
+        self.assertIn("請自行決定", joined)
+        for stop in flagged:
+            self.assertIn(stop.name, joined)
+
+    def test_warn_only_and_decide_later_wording_differs(self):
+        a = self._plan("warn-only")
+        b = self._plan("decide-later")
+        self.assertNotEqual(a.warnings, b.warnings, "兩種模式的提示必須可區分，否則等於同一個選項")
+
+    def test_decide_later_without_triggers_is_silent(self):
+        result = plan(DATA, Preferences(budget_min=420, triggers=(), handling="decide-later"))
+        self.assertEqual(result.excluded, [])
+        self.assertFalse(
+            [w for w in result.warnings if "請自行決定" in w],
+            "未勾選任何觸發維度時，不應出現待決策提示",
+        )

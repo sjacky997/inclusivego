@@ -516,7 +516,7 @@
             ${handlingChoice('avoid-high','避開「強」程度','保留弱及中程度景點，清楚顯示提示。','shield-check')}
             ${handlingChoice('avoid-medium','避開「中」及「強」程度','建立較保守、景點較少的路線。','shield')}
             ${handlingChoice('warn-only','保留景點，只作提醒','不自動移除景點，由我當日決定。','bell-ring')}
-            ${handlingChoice('decide-later','我未確定','先建立路線，每站都提供略過及 Plan B。','circle-help')}
+            ${handlingChoice('decide-later','我未確定','先建立完整路線；踩到門檻的站會標明，由你自行決定要不要略過。','circle-help')}
           </div>
           ${state.triggers.includes('crowd') ? '<div class="ig-inline-note">你選擇了人流或排隊。結果頁會加入遊客服務中心及排隊支援資料，但不保證即時入場。</div>' : ''}`;
         if (step === 2) q.innerHTML = `

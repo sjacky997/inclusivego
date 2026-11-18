@@ -358,10 +358,21 @@ def plan(payload: dict, prefs: Preferences) -> Plan:
     result.total_max = sum(items[s.id]["duration"]["max"] for s in result.stops)
     result.breaks = blocks
 
-    if prefs.handling == "warn-only":
-        risky = [s.name for s in chosen if prefs.triggers and any(items[s.id]["sensory"][d] >= 5 for d in prefs.triggers)]
+    if prefs.handling in {"warn-only", "decide-later"}:
+        high = AVOID_THRESHOLD["avoid-high"]
+        risky = [
+            s.name for s in chosen
+            if prefs.triggers and any(items[s.id]["sensory"][d] >= high for d in prefs.triggers)
+        ]
         if risky:
-            result.warnings.append("以下景點有高刺激但已保留：" + "、".join(risky))
+            if prefs.handling == "warn-only":
+                result.warnings.append("以下景點有高刺激但已保留：" + "、".join(risky))
+            else:
+                # decide-later 與 warn-only 的選站完全相同，差別只在責任歸屬：
+                # 前者把「要不要略過」交回使用者，措辭不得寫成「已為你處理」。
+                result.warnings.append(
+                    "以下景點已達高刺激門檻，未自動排除，請自行決定是否略過：" + "、".join(risky)
+                )
     if prefs.meal == "own":
         result.warnings.append("自備食物：需自行安排用餐地點，未預留固定餐桌時間")
 

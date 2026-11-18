@@ -52,7 +52,7 @@ python3 serve.py                 # 驗證通過後開站
 | `zone` | 所屬區域 | 必須是四個區域之一，求解器按此分區 |
 | `duration.min/max` | 建議停留時間（分鐘） | 要有數值，不能是「10–15 分鐘」這種文字 |
 | `duration.approx` | 是否約數 | 原資料寫「約」的填 `true` |
-| `sensory` | 八個感官維度，1 低、3 中、5 高 | 門檻建議 ≥4 才算「要避開」 |
+| `sensory` | 八個感官維度，1 低、3 中、5 高（名義 1–5，實務只用 1/3/5） | 判準見 [`docs/sensory-rubric.md`](docs/sensory-rubric.md) |
 | `story.experience` | 我會經歷甚麼 | 第一人稱，事實不得由 AI 改寫 |
 | `story.prep` | 我可以怎樣準備 | 同上 |
 | `point.x/y` | 底圖像素座標 | 換底圖必須同步換算 |
@@ -82,11 +82,13 @@ python3 -m solver.planner --budget 240 --avoid sound,crowd --handling avoid-high
 python3 -m unittest discover -s tests -v
 ```
 
-`--handling` 四種：`avoid-high`（剔除高刺激）、`avoid-medium`（中以上都剔除）、`warn-only`（全部保留只提醒）、`decide-later`（不剔除）。`--priority` 三種：`low-stimulation`、`less-walking`、`more-interest`。
+`--handling` 四種：`avoid-high`（剔 ≥5）、`avoid-medium`（剔 ≥4，「中」保留）、`warn-only`（全部保留只提醒）、`decide-later`（不剔除）。`--priority` 三種：`low-stimulation`、`less-walking`、`more-interest`。
 
 輸出包含每一站的理由、休息與用餐插入位置、以及被排除的景點與原因。區域順序固定（正門外 → 夢幻水都 → 亞洲動物天地 → 威威天地），不會跳區回頭。
 
 實測：p95 延遲 0.3 毫秒，跨區動態規劃轉移 75 次。
+
+感官門檻的判準與改動理由見 [`docs/sensory-rubric.md`](docs/sensory-rubric.md)；一鍵重現（驗證＋測試＋固定輸入雜湊＋前端語法）跑 `bash scripts/reproduce.sh`。
 
 ## 前端如何取得路線
 

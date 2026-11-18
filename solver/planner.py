@@ -33,8 +33,9 @@ WALK_BETWEEN_ZONES_MIN = 8      # 相鄰區域步行時間，假設值
 REST_MINUTES = 15               # 每次休息長度
 MEAL_MINUTES = {"none": 0, "snack": 15, "meal": 40, "own": 20}
 
-# 硬約束門檻：avoid-high 剔除 5，avoid-medium 剔徐 3 以上
-AVOID_THRESHOLD = {"avoid-high": 5, "avoid-medium": 3}
+# 硬約束門檻：avoid-high 剔除 5，avoid-medium 只剔除 4 以上（中等刺激保留，由介面標示）
+# 1–5 名義五級，實務只用到 1／3／5；門檻語義見 docs/sensory-rubric.md
+AVOID_THRESHOLD = {"avoid-high": 5, "avoid-medium": 4}
 
 
 @dataclass(frozen=True)

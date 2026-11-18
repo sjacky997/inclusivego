@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import copy
 import itertools
 import random
 import time
@@ -40,9 +41,12 @@ class TestHardConstraints(unittest.TestCase):
             self.assertGreaterEqual(BY_ID[item["id"]]["sensory"]["sound"], 5)
 
     def test_avoid_medium_is_stricter_than_avoid_high(self):
-        high = plan(DATA, Preferences(budget_min=600, triggers=("crowd",), handling="avoid-high"))
-        medium = plan(DATA, Preferences(budget_min=600, triggers=("crowd",), handling="avoid-medium"))
-        self.assertLess(len(medium.stops), len(high.stops))
+        # 現有 17 站沒有 4 級，用合成站證明 avoid-medium（剔 4 以上）比 avoid-high（剔 5）嚴
+        payload = TestSensoryThreshold._payload_with_level_four()
+        high = plan(payload, Preferences(budget_min=900, triggers=("crowd",), handling="avoid-high", rest_interval=0))
+        medium = plan(payload, Preferences(budget_min=900, triggers=("crowd",), handling="avoid-medium", rest_interval=0))
+        self.assertIn("synthetic_level_four", {s.id for s in high.stops})
+        self.assertNotIn("synthetic_level_four", {s.id for s in medium.stops})
 
     def test_warn_only_keeps_high_stimulation(self):
         prefs = Preferences(budget_min=600, triggers=("sound",), handling="warn-only", rest_interval=0)
@@ -228,3 +232,31 @@ class TestPerformance(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestSensoryThreshold(unittest.TestCase):
+    """鎖住「1–5 名義五級、實務三級」下 avoid-medium 的門檻語義。"""
+
+    @staticmethod
+    def _payload_with_level_four() -> dict:
+        base = copy.deepcopy(FACILITIES[0])
+        base.update({
+            "id": "synthetic_level_four",
+            "name": "測試站（人群 4）",
+            "sensory": {dim: 1 for dim in DIMS},
+        })
+        base["sensory"]["crowd"] = 4
+        return {"facilities": FACILITIES + [base]}
+
+    def test_level_three_kept_by_medium(self):
+        # 改前：門檻 3 會把「中」也剔掉，只勾人群時只剩 4 站
+        result = plan(DATA, Preferences(budget_min=240, triggers=("crowd",), handling="avoid-medium"))
+        self.assertTrue(any(BY_ID[s.id]["sensory"]["crowd"] == 3 for s in result.stops),
+                        "門檻改 4 之後，人群等級 3 的站應留在候選中")
+
+    def test_light_trigger_no_longer_returns_empty_route(self):
+        # 改前：light 只有 3 與 5，avoid-medium 以 3 為門檻會全數剔除，回傳 0 站
+        result = plan(DATA, Preferences(budget_min=240, triggers=("light",), handling="avoid-medium"))
+        self.assertGreater(len(result.stops), 0)
+        for stop in result.stops:
+            self.assertLessEqual(BY_ID[stop.id]["sensory"]["light"], 3)

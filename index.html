@@ -61,6 +61,16 @@
       border-radius: 999px;
       padding: 7px 12px;
     }
+    .ig-maplink {
+      color: var(--ig-blue-deep);
+      background: var(--ig-white);
+      border: 1px solid var(--ig-line);
+      border-radius: 999px;
+      padding: 7px 12px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .ig-maplink:hover { background: var(--ig-blue-soft); }
     .ig-shell {
       display: grid;
       grid-template-columns: minmax(220px, 32%) minmax(0, 68%);
@@ -275,7 +285,7 @@
 
   <header class="ig-topbar">
     <div class="ig-brand"><span class="ig-brand-mark"><i data-lucide="route" aria-hidden="true"></i></span><span>InclusiveGo 共融智遊</span></div>
-    <div class="ig-top-meta"><span>海濱樂園個人化行程</span><span class="ig-count" id="ig-selected-count">已選景點 0</span></div>
+    <div class="ig-top-meta"><span>海濱樂園個人化行程</span><span class="ig-count" id="ig-selected-count">已選景點 0</span><a class="ig-maplink" href="map.html" aria-label="另開感官示意地圖">感官地圖 ↗</a></div>
   </header>
 
   <main class="ig-shell">

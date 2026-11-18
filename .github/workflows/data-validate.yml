@@ -10,6 +10,7 @@ on:
       - "scripts/**"
       - "solver/**"
       - "tests/**"
+      - "map.html"
       - "serve.py"
       - "index.html"
       - "requirements.txt"
@@ -21,6 +22,7 @@ on:
       - "scripts/**"
       - "solver/**"
       - "tests/**"
+      - "map.html"
       - "serve.py"
       - "index.html"
       - "requirements.txt"
@@ -45,3 +47,7 @@ jobs:
         run: python3 scripts/check_frontend.py
       - name: Check robustness baseline
         run: python3 scripts/sim_check.py
+      - name: Check map snapshot is up to date
+        run: |
+          python3 scripts/build_map.py
+          git diff --exit-code map.html

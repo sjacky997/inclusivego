@@ -1,0 +1,545 @@
+station_id,station,dim,value,scenario,flip_plus1,flip_minus1,flip_plus2,flip_minus2,in_baseline
+crocodile_park,鱷園,sound,1,2h/避免高,False,False,False,False,True
+crocodile_park,鱷園,sound,1,半日/避免高,False,False,False,False,True
+crocodile_park,鱷園,sound,1,全日/避免高,False,False,False,False,True
+crocodile_park,鱷園,sound,1,半日/避免中以上,False,False,False,False,True
+crocodile_park,鱷園,light,3,2h/避免高,False,False,False,False,True
+crocodile_park,鱷園,light,3,半日/避免高,False,False,False,False,True
+crocodile_park,鱷園,light,3,全日/避免高,False,False,False,False,True
+crocodile_park,鱷園,light,3,半日/避免中以上,False,False,False,False,True
+crocodile_park,鱷園,crowd,1,2h/避免高,False,False,False,False,True
+crocodile_park,鱷園,crowd,1,半日/避免高,False,False,False,False,True
+crocodile_park,鱷園,crowd,1,全日/避免高,False,False,False,False,True
+crocodile_park,鱷園,crowd,1,半日/避免中以上,False,False,False,False,True
+crocodile_park,鱷園,enclosed,3,2h/避免高,False,False,False,False,True
+crocodile_park,鱷園,enclosed,3,半日/避免高,False,False,False,False,True
+crocodile_park,鱷園,enclosed,3,全日/避免高,False,False,False,False,True
+crocodile_park,鱷園,enclosed,3,半日/避免中以上,False,False,False,False,True
+crocodile_park,鱷園,smell,1,2h/避免高,False,False,False,False,True
+crocodile_park,鱷園,smell,1,半日/避免高,False,False,False,False,True
+crocodile_park,鱷園,smell,1,全日/避免高,False,False,False,False,True
+crocodile_park,鱷園,smell,1,半日/避免中以上,False,False,False,False,True
+crocodile_park,鱷園,cold,3,2h/避免高,False,False,False,False,True
+crocodile_park,鱷園,cold,3,半日/避免高,False,False,False,False,True
+crocodile_park,鱷園,cold,3,全日/避免高,False,False,False,False,True
+crocodile_park,鱷園,cold,3,半日/避免中以上,False,False,False,False,True
+crocodile_park,鱷園,wet,1,2h/避免高,False,False,False,False,True
+crocodile_park,鱷園,wet,1,半日/避免高,False,False,False,False,True
+crocodile_park,鱷園,wet,1,全日/避免高,False,False,False,False,True
+crocodile_park,鱷園,wet,1,半日/避免中以上,False,False,False,False,True
+crocodile_park,鱷園,motion,1,2h/避免高,False,False,False,False,True
+crocodile_park,鱷園,motion,1,半日/避免高,False,False,False,False,True
+crocodile_park,鱷園,motion,1,全日/避免高,False,False,False,False,True
+crocodile_park,鱷園,motion,1,半日/避免中以上,False,False,False,False,True
+grand_aquarium,海洋奇觀,sound,3,2h/避免高,False,False,False,False,False
+grand_aquarium,海洋奇觀,sound,3,半日/避免高,False,False,False,False,False
+grand_aquarium,海洋奇觀,sound,3,全日/避免高,False,False,False,False,False
+grand_aquarium,海洋奇觀,sound,3,半日/避免中以上,False,False,False,False,False
+grand_aquarium,海洋奇觀,light,5,2h/避免高,False,False,False,False,False
+grand_aquarium,海洋奇觀,light,5,半日/避免高,False,False,False,False,False
+grand_aquarium,海洋奇觀,light,5,全日/避免高,False,False,False,False,False
+grand_aquarium,海洋奇觀,light,5,半日/避免中以上,False,False,False,False,False
+grand_aquarium,海洋奇觀,crowd,5,2h/避免高,False,False,False,False,False
+grand_aquarium,海洋奇觀,crowd,5,半日/避免高,False,True,False,True,False
+grand_aquarium,海洋奇觀,crowd,5,全日/避免高,False,True,False,True,False
+grand_aquarium,海洋奇觀,crowd,5,半日/避免中以上,False,False,False,True,False
+grand_aquarium,海洋奇觀,enclosed,3,2h/避免高,False,False,False,False,False
+grand_aquarium,海洋奇觀,enclosed,3,半日/避免高,False,False,False,False,False
+grand_aquarium,海洋奇觀,enclosed,3,全日/避免高,False,False,False,False,False
+grand_aquarium,海洋奇觀,enclosed,3,半日/避免中以上,False,False,False,False,False
+grand_aquarium,海洋奇觀,smell,1,2h/避免高,False,False,False,False,False
+grand_aquarium,海洋奇觀,smell,1,半日/避免高,False,False,False,False,False
+grand_aquarium,海洋奇觀,smell,1,全日/避免高,False,False,False,False,False
+grand_aquarium,海洋奇觀,smell,1,半日/避免中以上,False,False,False,False,False
+grand_aquarium,海洋奇觀,cold,3,2h/避免高,False,False,False,False,False
+grand_aquarium,海洋奇觀,cold,3,半日/避免高,False,False,False,False,False
+grand_aquarium,海洋奇觀,cold,3,全日/避免高,False,False,False,False,False
+grand_aquarium,海洋奇觀,cold,3,半日/避免中以上,False,False,False,False,False
+grand_aquarium,海洋奇觀,wet,3,2h/避免高,False,False,False,False,False
+grand_aquarium,海洋奇觀,wet,3,半日/避免高,False,False,False,False,False
+grand_aquarium,海洋奇觀,wet,3,全日/避免高,False,False,False,False,False
+grand_aquarium,海洋奇觀,wet,3,半日/避免中以上,False,False,False,False,False
+grand_aquarium,海洋奇觀,motion,1,2h/避免高,False,False,False,False,False
+grand_aquarium,海洋奇觀,motion,1,半日/避免高,False,False,False,False,False
+grand_aquarium,海洋奇觀,motion,1,全日/避免高,False,False,False,False,False
+grand_aquarium,海洋奇觀,motion,1,半日/避免中以上,False,False,False,False,False
+water_world,環迴水世界,sound,5,2h/避免高,False,False,False,True,False
+water_world,環迴水世界,sound,5,半日/避免高,False,True,False,True,False
+water_world,環迴水世界,sound,5,全日/避免高,False,True,False,True,False
+water_world,環迴水世界,sound,5,半日/避免中以上,False,False,False,True,False
+water_world,環迴水世界,light,5,2h/避免高,False,False,False,False,False
+water_world,環迴水世界,light,5,半日/避免高,False,False,False,False,False
+water_world,環迴水世界,light,5,全日/避免高,False,False,False,False,False
+water_world,環迴水世界,light,5,半日/避免中以上,False,False,False,False,False
+water_world,環迴水世界,crowd,3,2h/避免高,False,False,False,False,False
+water_world,環迴水世界,crowd,3,半日/避免高,False,False,False,False,False
+water_world,環迴水世界,crowd,3,全日/避免高,False,False,False,False,False
+water_world,環迴水世界,crowd,3,半日/避免中以上,False,False,False,False,False
+water_world,環迴水世界,enclosed,3,2h/避免高,False,False,False,False,False
+water_world,環迴水世界,enclosed,3,半日/避免高,False,False,False,False,False
+water_world,環迴水世界,enclosed,3,全日/避免高,False,False,False,False,False
+water_world,環迴水世界,enclosed,3,半日/避免中以上,False,False,False,False,False
+water_world,環迴水世界,smell,1,2h/避免高,False,False,False,False,False
+water_world,環迴水世界,smell,1,半日/避免高,False,False,False,False,False
+water_world,環迴水世界,smell,1,全日/避免高,False,False,False,False,False
+water_world,環迴水世界,smell,1,半日/避免中以上,False,False,False,False,False
+water_world,環迴水世界,cold,1,2h/避免高,False,False,False,False,False
+water_world,環迴水世界,cold,1,半日/避免高,False,False,False,False,False
+water_world,環迴水世界,cold,1,全日/避免高,False,False,False,False,False
+water_world,環迴水世界,cold,1,半日/避免中以上,False,False,False,False,False
+water_world,環迴水世界,wet,1,2h/避免高,False,False,False,False,False
+water_world,環迴水世界,wet,1,半日/避免高,False,False,False,False,False
+water_world,環迴水世界,wet,1,全日/避免高,False,False,False,False,False
+water_world,環迴水世界,wet,1,半日/避免中以上,False,False,False,False,False
+water_world,環迴水世界,motion,5,2h/避免高,False,False,False,False,False
+water_world,環迴水世界,motion,5,半日/避免高,False,False,False,False,False
+water_world,環迴水世界,motion,5,全日/避免高,False,False,False,False,False
+water_world,環迴水世界,motion,5,半日/避免中以上,False,False,False,False,False
+old_hong_kong,香港老大街,sound,5,2h/避免高,False,False,False,False,False
+old_hong_kong,香港老大街,sound,5,半日/避免高,False,False,False,False,False
+old_hong_kong,香港老大街,sound,5,全日/避免高,False,False,False,False,False
+old_hong_kong,香港老大街,sound,5,半日/避免中以上,False,False,False,False,False
+old_hong_kong,香港老大街,light,3,2h/避免高,False,False,False,False,False
+old_hong_kong,香港老大街,light,3,半日/避免高,False,False,False,False,False
+old_hong_kong,香港老大街,light,3,全日/避免高,False,False,False,False,False
+old_hong_kong,香港老大街,light,3,半日/避免中以上,False,False,False,False,False
+old_hong_kong,香港老大街,crowd,5,2h/避免高,False,False,False,False,False
+old_hong_kong,香港老大街,crowd,5,半日/避免高,False,False,False,False,False
+old_hong_kong,香港老大街,crowd,5,全日/避免高,False,False,False,False,False
+old_hong_kong,香港老大街,crowd,5,半日/避免中以上,False,False,False,False,False
+old_hong_kong,香港老大街,enclosed,3,2h/避免高,False,False,False,False,False
+old_hong_kong,香港老大街,enclosed,3,半日/避免高,False,False,False,False,False
+old_hong_kong,香港老大街,enclosed,3,全日/避免高,False,False,False,False,False
+old_hong_kong,香港老大街,enclosed,3,半日/避免中以上,False,False,False,False,False
+old_hong_kong,香港老大街,smell,5,2h/避免高,False,False,False,False,False
+old_hong_kong,香港老大街,smell,5,半日/避免高,False,False,False,False,False
+old_hong_kong,香港老大街,smell,5,全日/避免高,False,False,False,False,False
+old_hong_kong,香港老大街,smell,5,半日/避免中以上,False,False,False,False,False
+old_hong_kong,香港老大街,cold,1,2h/避免高,False,False,False,False,False
+old_hong_kong,香港老大街,cold,1,半日/避免高,False,False,False,False,False
+old_hong_kong,香港老大街,cold,1,全日/避免高,False,False,False,False,False
+old_hong_kong,香港老大街,cold,1,半日/避免中以上,False,False,False,False,False
+old_hong_kong,香港老大街,wet,3,2h/避免高,False,False,False,False,False
+old_hong_kong,香港老大街,wet,3,半日/避免高,False,False,False,False,False
+old_hong_kong,香港老大街,wet,3,全日/避免高,False,False,False,False,False
+old_hong_kong,香港老大街,wet,3,半日/避免中以上,False,False,False,False,False
+old_hong_kong,香港老大街,motion,1,2h/避免高,False,False,False,False,False
+old_hong_kong,香港老大街,motion,1,半日/避免高,False,False,False,False,False
+old_hong_kong,香港老大街,motion,1,全日/避免高,False,False,False,False,False
+old_hong_kong,香港老大街,motion,1,半日/避免中以上,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,sound,1,2h/避免高,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,sound,1,半日/避免高,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,sound,1,全日/避免高,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,sound,1,半日/避免中以上,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,light,3,2h/避免高,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,light,3,半日/避免高,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,light,3,全日/避免高,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,light,3,半日/避免中以上,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,crowd,5,2h/避免高,False,True,False,True,False
+sichuan_treasures,香港賽馬會四川奇珍館,crowd,5,半日/避免高,False,True,False,True,False
+sichuan_treasures,香港賽馬會四川奇珍館,crowd,5,全日/避免高,False,True,False,True,False
+sichuan_treasures,香港賽馬會四川奇珍館,crowd,5,半日/避免中以上,False,False,False,True,False
+sichuan_treasures,香港賽馬會四川奇珍館,enclosed,3,2h/避免高,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,enclosed,3,半日/避免高,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,enclosed,3,全日/避免高,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,enclosed,3,半日/避免中以上,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,smell,1,2h/避免高,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,smell,1,半日/避免高,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,smell,1,全日/避免高,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,smell,1,半日/避免中以上,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,cold,3,2h/避免高,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,cold,3,半日/避免高,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,cold,3,全日/避免高,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,cold,3,半日/避免中以上,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,wet,1,2h/避免高,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,wet,1,半日/避免高,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,wet,1,全日/避免高,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,wet,1,半日/避免中以上,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,motion,1,2h/避免高,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,motion,1,半日/避免高,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,motion,1,全日/避免高,False,False,False,False,False
+sichuan_treasures,香港賽馬會四川奇珍館,motion,1,半日/避免中以上,False,False,False,False,False
+sloth_and_friends,樹懶與好友,sound,3,2h/避免高,False,False,False,False,False
+sloth_and_friends,樹懶與好友,sound,3,半日/避免高,False,False,True,False,True
+sloth_and_friends,樹懶與好友,sound,3,全日/避免高,False,False,True,False,True
+sloth_and_friends,樹懶與好友,sound,3,半日/避免中以上,True,False,True,False,True
+sloth_and_friends,樹懶與好友,light,3,2h/避免高,False,False,False,False,False
+sloth_and_friends,樹懶與好友,light,3,半日/避免高,False,False,False,False,True
+sloth_and_friends,樹懶與好友,light,3,全日/避免高,False,False,False,False,True
+sloth_and_friends,樹懶與好友,light,3,半日/避免中以上,False,False,False,False,True
+sloth_and_friends,樹懶與好友,crowd,3,2h/避免高,False,False,False,False,False
+sloth_and_friends,樹懶與好友,crowd,3,半日/避免高,False,False,True,False,True
+sloth_and_friends,樹懶與好友,crowd,3,全日/避免高,False,False,True,False,True
+sloth_and_friends,樹懶與好友,crowd,3,半日/避免中以上,True,False,True,False,True
+sloth_and_friends,樹懶與好友,enclosed,3,2h/避免高,False,False,False,False,False
+sloth_and_friends,樹懶與好友,enclosed,3,半日/避免高,False,False,False,False,True
+sloth_and_friends,樹懶與好友,enclosed,3,全日/避免高,False,False,False,False,True
+sloth_and_friends,樹懶與好友,enclosed,3,半日/避免中以上,False,False,False,False,True
+sloth_and_friends,樹懶與好友,smell,3,2h/避免高,False,False,False,False,False
+sloth_and_friends,樹懶與好友,smell,3,半日/避免高,False,False,False,False,True
+sloth_and_friends,樹懶與好友,smell,3,全日/避免高,False,False,False,False,True
+sloth_and_friends,樹懶與好友,smell,3,半日/避免中以上,False,False,False,False,True
+sloth_and_friends,樹懶與好友,cold,3,2h/避免高,False,False,False,False,False
+sloth_and_friends,樹懶與好友,cold,3,半日/避免高,False,False,False,False,True
+sloth_and_friends,樹懶與好友,cold,3,全日/避免高,False,False,False,False,True
+sloth_and_friends,樹懶與好友,cold,3,半日/避免中以上,False,False,False,False,True
+sloth_and_friends,樹懶與好友,wet,1,2h/避免高,False,False,False,False,False
+sloth_and_friends,樹懶與好友,wet,1,半日/避免高,False,False,False,False,True
+sloth_and_friends,樹懶與好友,wet,1,全日/避免高,False,False,False,False,True
+sloth_and_friends,樹懶與好友,wet,1,半日/避免中以上,False,False,False,False,True
+sloth_and_friends,樹懶與好友,motion,1,2h/避免高,False,False,False,False,False
+sloth_and_friends,樹懶與好友,motion,1,半日/避免高,False,False,False,False,True
+sloth_and_friends,樹懶與好友,motion,1,全日/避免高,False,False,False,False,True
+sloth_and_friends,樹懶與好友,motion,1,半日/避免中以上,False,False,False,False,True
+panda_adventure,大熊貓之旅,sound,3,2h/避免高,False,False,False,False,False
+panda_adventure,大熊貓之旅,sound,3,半日/避免高,False,False,False,False,False
+panda_adventure,大熊貓之旅,sound,3,全日/避免高,False,False,False,False,False
+panda_adventure,大熊貓之旅,sound,3,半日/避免中以上,False,False,False,False,False
+panda_adventure,大熊貓之旅,light,3,2h/避免高,False,False,False,False,False
+panda_adventure,大熊貓之旅,light,3,半日/避免高,False,False,False,False,False
+panda_adventure,大熊貓之旅,light,3,全日/避免高,False,False,False,False,False
+panda_adventure,大熊貓之旅,light,3,半日/避免中以上,False,False,False,False,False
+panda_adventure,大熊貓之旅,crowd,5,2h/避免高,False,False,False,True,False
+panda_adventure,大熊貓之旅,crowd,5,半日/避免高,False,True,False,True,False
+panda_adventure,大熊貓之旅,crowd,5,全日/避免高,False,True,False,True,False
+panda_adventure,大熊貓之旅,crowd,5,半日/避免中以上,False,False,False,True,False
+panda_adventure,大熊貓之旅,enclosed,3,2h/避免高,False,False,False,False,False
+panda_adventure,大熊貓之旅,enclosed,3,半日/避免高,False,False,False,False,False
+panda_adventure,大熊貓之旅,enclosed,3,全日/避免高,False,False,False,False,False
+panda_adventure,大熊貓之旅,enclosed,3,半日/避免中以上,False,False,False,False,False
+panda_adventure,大熊貓之旅,smell,1,2h/避免高,False,False,False,False,False
+panda_adventure,大熊貓之旅,smell,1,半日/避免高,False,False,False,False,False
+panda_adventure,大熊貓之旅,smell,1,全日/避免高,False,False,False,False,False
+panda_adventure,大熊貓之旅,smell,1,半日/避免中以上,False,False,False,False,False
+panda_adventure,大熊貓之旅,cold,3,2h/避免高,False,False,False,False,False
+panda_adventure,大熊貓之旅,cold,3,半日/避免高,False,False,False,False,False
+panda_adventure,大熊貓之旅,cold,3,全日/避免高,False,False,False,False,False
+panda_adventure,大熊貓之旅,cold,3,半日/避免中以上,False,False,False,False,False
+panda_adventure,大熊貓之旅,wet,1,2h/避免高,False,False,False,False,False
+panda_adventure,大熊貓之旅,wet,1,半日/避免高,False,False,False,False,False
+panda_adventure,大熊貓之旅,wet,1,全日/避免高,False,False,False,False,False
+panda_adventure,大熊貓之旅,wet,1,半日/避免中以上,False,False,False,False,False
+panda_adventure,大熊貓之旅,motion,1,2h/避免高,False,False,False,False,False
+panda_adventure,大熊貓之旅,motion,1,半日/避免高,False,False,False,False,False
+panda_adventure,大熊貓之旅,motion,1,全日/避免高,False,False,False,False,False
+panda_adventure,大熊貓之旅,motion,1,半日/避免中以上,False,False,False,False,False
+local_stream_ecology,本地河溪生態館,sound,1,2h/避免高,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,sound,1,半日/避免高,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,sound,1,全日/避免高,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,sound,1,半日/避免中以上,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,light,3,2h/避免高,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,light,3,半日/避免高,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,light,3,全日/避免高,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,light,3,半日/避免中以上,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,crowd,1,2h/避免高,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,crowd,1,半日/避免高,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,crowd,1,全日/避免高,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,crowd,1,半日/避免中以上,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,enclosed,3,2h/避免高,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,enclosed,3,半日/避免高,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,enclosed,3,全日/避免高,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,enclosed,3,半日/避免中以上,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,smell,1,2h/避免高,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,smell,1,半日/避免高,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,smell,1,全日/避免高,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,smell,1,半日/避免中以上,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,cold,3,2h/避免高,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,cold,3,半日/避免高,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,cold,3,全日/避免高,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,cold,3,半日/避免中以上,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,wet,3,2h/避免高,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,wet,3,半日/避免高,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,wet,3,全日/避免高,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,wet,3,半日/避免中以上,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,motion,1,2h/避免高,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,motion,1,半日/避免高,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,motion,1,全日/避免高,False,False,False,False,True
+local_stream_ecology,本地河溪生態館,motion,1,半日/避免中以上,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,sound,1,2h/避免高,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,sound,1,半日/避免高,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,sound,1,全日/避免高,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,sound,1,半日/避免中以上,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,light,5,2h/避免高,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,light,5,半日/避免高,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,light,5,全日/避免高,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,light,5,半日/避免中以上,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,crowd,1,2h/避免高,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,crowd,1,半日/避免高,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,crowd,1,全日/避免高,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,crowd,1,半日/避免中以上,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,enclosed,1,2h/避免高,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,enclosed,1,半日/避免高,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,enclosed,1,全日/避免高,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,enclosed,1,半日/避免中以上,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,smell,3,2h/避免高,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,smell,3,半日/避免高,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,smell,3,全日/避免高,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,smell,3,半日/避免中以上,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,cold,1,2h/避免高,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,cold,1,半日/避免高,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,cold,1,全日/避免高,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,cold,1,半日/避免中以上,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,wet,3,2h/避免高,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,wet,3,半日/避免高,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,wet,3,全日/避免高,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,wet,3,半日/避免中以上,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,motion,1,2h/避免高,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,motion,1,半日/避免高,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,motion,1,全日/避免高,False,False,False,False,True
+whiskers_herb_garden,威威百草谷,motion,1,半日/避免中以上,False,False,False,False,True
+herb_trail,百草生態徑,sound,1,2h/避免高,False,False,False,False,True
+herb_trail,百草生態徑,sound,1,半日/避免高,False,False,False,False,True
+herb_trail,百草生態徑,sound,1,全日/避免高,False,False,False,False,True
+herb_trail,百草生態徑,sound,1,半日/避免中以上,False,False,False,False,True
+herb_trail,百草生態徑,light,5,2h/避免高,False,False,False,False,True
+herb_trail,百草生態徑,light,5,半日/避免高,False,False,False,False,True
+herb_trail,百草生態徑,light,5,全日/避免高,False,False,False,False,True
+herb_trail,百草生態徑,light,5,半日/避免中以上,False,False,False,False,True
+herb_trail,百草生態徑,crowd,1,2h/避免高,False,False,False,False,True
+herb_trail,百草生態徑,crowd,1,半日/避免高,False,False,False,False,True
+herb_trail,百草生態徑,crowd,1,全日/避免高,False,False,False,False,True
+herb_trail,百草生態徑,crowd,1,半日/避免中以上,False,False,False,False,True
+herb_trail,百草生態徑,enclosed,1,2h/避免高,False,False,False,False,True
+herb_trail,百草生態徑,enclosed,1,半日/避免高,False,False,False,False,True
+herb_trail,百草生態徑,enclosed,1,全日/避免高,False,False,False,False,True
+herb_trail,百草生態徑,enclosed,1,半日/避免中以上,False,False,False,False,True
+herb_trail,百草生態徑,smell,3,2h/避免高,False,False,False,False,True
+herb_trail,百草生態徑,smell,3,半日/避免高,False,False,False,False,True
+herb_trail,百草生態徑,smell,3,全日/避免高,False,False,False,False,True
+herb_trail,百草生態徑,smell,3,半日/避免中以上,False,False,False,False,True
+herb_trail,百草生態徑,cold,1,2h/避免高,False,False,False,False,True
+herb_trail,百草生態徑,cold,1,半日/避免高,False,False,False,False,True
+herb_trail,百草生態徑,cold,1,全日/避免高,False,False,False,False,True
+herb_trail,百草生態徑,cold,1,半日/避免中以上,False,False,False,False,True
+herb_trail,百草生態徑,wet,3,2h/避免高,False,False,False,False,True
+herb_trail,百草生態徑,wet,3,半日/避免高,False,False,False,False,True
+herb_trail,百草生態徑,wet,3,全日/避免高,False,False,False,False,True
+herb_trail,百草生態徑,wet,3,半日/避免中以上,False,False,False,False,True
+herb_trail,百草生態徑,motion,1,2h/避免高,False,False,False,False,True
+herb_trail,百草生態徑,motion,1,半日/避免高,False,False,False,False,True
+herb_trail,百草生態徑,motion,1,全日/避免高,False,False,False,False,True
+herb_trail,百草生態徑,motion,1,半日/避免中以上,False,False,False,False,True
+meerkat_tortoise_journey,小狐獴與大象龜之旅,sound,3,2h/避免高,False,False,False,False,False
+meerkat_tortoise_journey,小狐獴與大象龜之旅,sound,3,半日/避免高,False,False,True,False,True
+meerkat_tortoise_journey,小狐獴與大象龜之旅,sound,3,全日/避免高,False,False,True,False,True
+meerkat_tortoise_journey,小狐獴與大象龜之旅,sound,3,半日/避免中以上,True,False,True,False,True
+meerkat_tortoise_journey,小狐獴與大象龜之旅,light,3,2h/避免高,False,False,False,False,False
+meerkat_tortoise_journey,小狐獴與大象龜之旅,light,3,半日/避免高,False,False,False,False,True
+meerkat_tortoise_journey,小狐獴與大象龜之旅,light,3,全日/避免高,False,False,False,False,True
+meerkat_tortoise_journey,小狐獴與大象龜之旅,light,3,半日/避免中以上,False,False,False,False,True
+meerkat_tortoise_journey,小狐獴與大象龜之旅,crowd,3,2h/避免高,False,False,False,False,False
+meerkat_tortoise_journey,小狐獴與大象龜之旅,crowd,3,半日/避免高,False,False,True,False,True
+meerkat_tortoise_journey,小狐獴與大象龜之旅,crowd,3,全日/避免高,False,False,True,False,True
+meerkat_tortoise_journey,小狐獴與大象龜之旅,crowd,3,半日/避免中以上,True,False,True,False,True
+meerkat_tortoise_journey,小狐獴與大象龜之旅,enclosed,3,2h/避免高,False,False,False,False,False
+meerkat_tortoise_journey,小狐獴與大象龜之旅,enclosed,3,半日/避免高,False,False,False,False,True
+meerkat_tortoise_journey,小狐獴與大象龜之旅,enclosed,3,全日/避免高,False,False,False,False,True
+meerkat_tortoise_journey,小狐獴與大象龜之旅,enclosed,3,半日/避免中以上,False,False,False,False,True
+meerkat_tortoise_journey,小狐獴與大象龜之旅,smell,3,2h/避免高,False,False,False,False,False
+meerkat_tortoise_journey,小狐獴與大象龜之旅,smell,3,半日/避免高,False,False,False,False,True
+meerkat_tortoise_journey,小狐獴與大象龜之旅,smell,3,全日/避免高,False,False,False,False,True
+meerkat_tortoise_journey,小狐獴與大象龜之旅,smell,3,半日/避免中以上,False,False,False,False,True
+meerkat_tortoise_journey,小狐獴與大象龜之旅,cold,1,2h/避免高,False,False,False,False,False
+meerkat_tortoise_journey,小狐獴與大象龜之旅,cold,1,半日/避免高,False,False,False,False,True
+meerkat_tortoise_journey,小狐獴與大象龜之旅,cold,1,全日/避免高,False,False,False,False,True
+meerkat_tortoise_journey,小狐獴與大象龜之旅,cold,1,半日/避免中以上,False,False,False,False,True
+meerkat_tortoise_journey,小狐獴與大象龜之旅,wet,1,2h/避免高,False,False,False,False,False
+meerkat_tortoise_journey,小狐獴與大象龜之旅,wet,1,半日/避免高,False,False,False,False,True
+meerkat_tortoise_journey,小狐獴與大象龜之旅,wet,1,全日/避免高,False,False,False,False,True
+meerkat_tortoise_journey,小狐獴與大象龜之旅,wet,1,半日/避免中以上,False,False,False,False,True
+meerkat_tortoise_journey,小狐獴與大象龜之旅,motion,1,2h/避免高,False,False,False,False,False
+meerkat_tortoise_journey,小狐獴與大象龜之旅,motion,1,半日/避免高,False,False,False,False,True
+meerkat_tortoise_journey,小狐獴與大象龜之旅,motion,1,全日/避免高,False,False,False,False,True
+meerkat_tortoise_journey,小狐獴與大象龜之旅,motion,1,半日/避免中以上,False,False,False,False,True
+choo_choo_train,砵砵火車頭,sound,5,2h/避免高,False,False,False,False,False
+choo_choo_train,砵砵火車頭,sound,5,半日/避免高,False,True,False,True,False
+choo_choo_train,砵砵火車頭,sound,5,全日/避免高,False,True,False,True,False
+choo_choo_train,砵砵火車頭,sound,5,半日/避免中以上,False,False,False,True,False
+choo_choo_train,砵砵火車頭,light,5,2h/避免高,False,False,False,False,False
+choo_choo_train,砵砵火車頭,light,5,半日/避免高,False,False,False,False,False
+choo_choo_train,砵砵火車頭,light,5,全日/避免高,False,False,False,False,False
+choo_choo_train,砵砵火車頭,light,5,半日/避免中以上,False,False,False,False,False
+choo_choo_train,砵砵火車頭,crowd,3,2h/避免高,False,False,False,False,False
+choo_choo_train,砵砵火車頭,crowd,3,半日/避免高,False,False,False,False,False
+choo_choo_train,砵砵火車頭,crowd,3,全日/避免高,False,False,False,False,False
+choo_choo_train,砵砵火車頭,crowd,3,半日/避免中以上,False,False,False,False,False
+choo_choo_train,砵砵火車頭,enclosed,3,2h/避免高,False,False,False,False,False
+choo_choo_train,砵砵火車頭,enclosed,3,半日/避免高,False,False,False,False,False
+choo_choo_train,砵砵火車頭,enclosed,3,全日/避免高,False,False,False,False,False
+choo_choo_train,砵砵火車頭,enclosed,3,半日/避免中以上,False,False,False,False,False
+choo_choo_train,砵砵火車頭,smell,1,2h/避免高,False,False,False,False,False
+choo_choo_train,砵砵火車頭,smell,1,半日/避免高,False,False,False,False,False
+choo_choo_train,砵砵火車頭,smell,1,全日/避免高,False,False,False,False,False
+choo_choo_train,砵砵火車頭,smell,1,半日/避免中以上,False,False,False,False,False
+choo_choo_train,砵砵火車頭,cold,1,2h/避免高,False,False,False,False,False
+choo_choo_train,砵砵火車頭,cold,1,半日/避免高,False,False,False,False,False
+choo_choo_train,砵砵火車頭,cold,1,全日/避免高,False,False,False,False,False
+choo_choo_train,砵砵火車頭,cold,1,半日/避免中以上,False,False,False,False,False
+choo_choo_train,砵砵火車頭,wet,1,2h/避免高,False,False,False,False,False
+choo_choo_train,砵砵火車頭,wet,1,半日/避免高,False,False,False,False,False
+choo_choo_train,砵砵火車頭,wet,1,全日/避免高,False,False,False,False,False
+choo_choo_train,砵砵火車頭,wet,1,半日/避免中以上,False,False,False,False,False
+choo_choo_train,砵砵火車頭,motion,3,2h/避免高,False,False,False,False,False
+choo_choo_train,砵砵火車頭,motion,3,半日/避免高,False,False,False,False,False
+choo_choo_train,砵砵火車頭,motion,3,全日/避免高,False,False,False,False,False
+choo_choo_train,砵砵火車頭,motion,3,半日/避免中以上,False,False,False,False,False
+carousel,幻彩旋轉馬,sound,5,2h/避免高,False,False,False,False,False
+carousel,幻彩旋轉馬,sound,5,半日/避免高,False,True,False,True,False
+carousel,幻彩旋轉馬,sound,5,全日/避免高,False,True,False,True,False
+carousel,幻彩旋轉馬,sound,5,半日/避免中以上,False,False,False,True,False
+carousel,幻彩旋轉馬,light,5,2h/避免高,False,False,False,False,False
+carousel,幻彩旋轉馬,light,5,半日/避免高,False,False,False,False,False
+carousel,幻彩旋轉馬,light,5,全日/避免高,False,False,False,False,False
+carousel,幻彩旋轉馬,light,5,半日/避免中以上,False,False,False,False,False
+carousel,幻彩旋轉馬,crowd,3,2h/避免高,False,False,False,False,False
+carousel,幻彩旋轉馬,crowd,3,半日/避免高,False,False,False,False,False
+carousel,幻彩旋轉馬,crowd,3,全日/避免高,False,False,False,False,False
+carousel,幻彩旋轉馬,crowd,3,半日/避免中以上,False,False,False,False,False
+carousel,幻彩旋轉馬,enclosed,3,2h/避免高,False,False,False,False,False
+carousel,幻彩旋轉馬,enclosed,3,半日/避免高,False,False,False,False,False
+carousel,幻彩旋轉馬,enclosed,3,全日/避免高,False,False,False,False,False
+carousel,幻彩旋轉馬,enclosed,3,半日/避免中以上,False,False,False,False,False
+carousel,幻彩旋轉馬,smell,1,2h/避免高,False,False,False,False,False
+carousel,幻彩旋轉馬,smell,1,半日/避免高,False,False,False,False,False
+carousel,幻彩旋轉馬,smell,1,全日/避免高,False,False,False,False,False
+carousel,幻彩旋轉馬,smell,1,半日/避免中以上,False,False,False,False,False
+carousel,幻彩旋轉馬,cold,1,2h/避免高,False,False,False,False,False
+carousel,幻彩旋轉馬,cold,1,半日/避免高,False,False,False,False,False
+carousel,幻彩旋轉馬,cold,1,全日/避免高,False,False,False,False,False
+carousel,幻彩旋轉馬,cold,1,半日/避免中以上,False,False,False,False,False
+carousel,幻彩旋轉馬,wet,1,2h/避免高,False,False,False,False,False
+carousel,幻彩旋轉馬,wet,1,半日/避免高,False,False,False,False,False
+carousel,幻彩旋轉馬,wet,1,全日/避免高,False,False,False,False,False
+carousel,幻彩旋轉馬,wet,1,半日/避免中以上,False,False,False,False,False
+carousel,幻彩旋轉馬,motion,3,2h/避免高,False,False,False,False,False
+carousel,幻彩旋轉馬,motion,3,半日/避免高,False,False,False,False,False
+carousel,幻彩旋轉馬,motion,3,全日/避免高,False,False,False,False,False
+carousel,幻彩旋轉馬,motion,3,半日/避免中以上,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,sound,5,2h/避免高,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,sound,5,半日/避免高,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,sound,5,全日/避免高,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,sound,5,半日/避免中以上,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,light,3,2h/避免高,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,light,3,半日/避免高,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,light,3,全日/避免高,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,light,3,半日/避免中以上,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,crowd,5,2h/避免高,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,crowd,5,半日/避免高,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,crowd,5,全日/避免高,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,crowd,5,半日/避免中以上,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,enclosed,5,2h/避免高,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,enclosed,5,半日/避免高,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,enclosed,5,全日/避免高,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,enclosed,5,半日/避免中以上,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,smell,1,2h/避免高,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,smell,1,半日/避免高,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,smell,1,全日/避免高,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,smell,1,半日/避免中以上,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,cold,1,2h/避免高,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,cold,1,半日/避免高,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,cold,1,全日/避免高,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,cold,1,半日/避免中以上,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,wet,1,2h/避免高,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,wet,1,半日/避免高,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,wet,1,全日/避免高,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,wet,1,半日/避免中以上,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,motion,3,2h/避免高,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,motion,3,半日/避免高,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,motion,3,全日/避免高,False,False,False,False,False
+little_bear_fortress,小紅熊堡壘,motion,3,半日/避免中以上,False,False,False,False,False
+sky_adventure,昇空奇遇,sound,5,2h/避免高,False,False,False,True,False
+sky_adventure,昇空奇遇,sound,5,半日/避免高,False,True,False,True,False
+sky_adventure,昇空奇遇,sound,5,全日/避免高,False,True,False,True,False
+sky_adventure,昇空奇遇,sound,5,半日/避免中以上,False,False,False,True,False
+sky_adventure,昇空奇遇,light,5,2h/避免高,False,False,False,False,False
+sky_adventure,昇空奇遇,light,5,半日/避免高,False,False,False,False,False
+sky_adventure,昇空奇遇,light,5,全日/避免高,False,False,False,False,False
+sky_adventure,昇空奇遇,light,5,半日/避免中以上,False,False,False,False,False
+sky_adventure,昇空奇遇,crowd,3,2h/避免高,False,False,False,False,False
+sky_adventure,昇空奇遇,crowd,3,半日/避免高,False,False,False,False,False
+sky_adventure,昇空奇遇,crowd,3,全日/避免高,False,False,False,False,False
+sky_adventure,昇空奇遇,crowd,3,半日/避免中以上,False,False,False,False,False
+sky_adventure,昇空奇遇,enclosed,3,2h/避免高,False,False,False,False,False
+sky_adventure,昇空奇遇,enclosed,3,半日/避免高,False,False,False,False,False
+sky_adventure,昇空奇遇,enclosed,3,全日/避免高,False,False,False,False,False
+sky_adventure,昇空奇遇,enclosed,3,半日/避免中以上,False,False,False,False,False
+sky_adventure,昇空奇遇,smell,1,2h/避免高,False,False,False,False,False
+sky_adventure,昇空奇遇,smell,1,半日/避免高,False,False,False,False,False
+sky_adventure,昇空奇遇,smell,1,全日/避免高,False,False,False,False,False
+sky_adventure,昇空奇遇,smell,1,半日/避免中以上,False,False,False,False,False
+sky_adventure,昇空奇遇,cold,1,2h/避免高,False,False,False,False,False
+sky_adventure,昇空奇遇,cold,1,半日/避免高,False,False,False,False,False
+sky_adventure,昇空奇遇,cold,1,全日/避免高,False,False,False,False,False
+sky_adventure,昇空奇遇,cold,1,半日/避免中以上,False,False,False,False,False
+sky_adventure,昇空奇遇,wet,1,2h/避免高,False,False,False,False,False
+sky_adventure,昇空奇遇,wet,1,半日/避免高,False,False,False,False,False
+sky_adventure,昇空奇遇,wet,1,全日/避免高,False,False,False,False,False
+sky_adventure,昇空奇遇,wet,1,半日/避免中以上,False,False,False,False,False
+sky_adventure,昇空奇遇,motion,5,2h/避免高,False,False,False,False,False
+sky_adventure,昇空奇遇,motion,5,半日/避免高,False,False,False,False,False
+sky_adventure,昇空奇遇,motion,5,全日/避免高,False,False,False,False,False
+sky_adventure,昇空奇遇,motion,5,半日/避免中以上,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,sound,5,2h/避免高,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,sound,5,半日/避免高,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,sound,5,全日/避免高,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,sound,5,半日/避免中以上,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,light,5,2h/避免高,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,light,5,半日/避免高,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,light,5,全日/避免高,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,light,5,半日/避免中以上,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,crowd,5,2h/避免高,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,crowd,5,半日/避免高,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,crowd,5,全日/避免高,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,crowd,5,半日/避免中以上,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,enclosed,3,2h/避免高,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,enclosed,3,半日/避免高,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,enclosed,3,全日/避免高,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,enclosed,3,半日/避免中以上,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,smell,1,2h/避免高,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,smell,1,半日/避免高,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,smell,1,全日/避免高,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,smell,1,半日/避免中以上,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,cold,1,2h/避免高,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,cold,1,半日/避免高,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,cold,1,全日/避免高,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,cold,1,半日/避免中以上,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,wet,3,2h/避免高,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,wet,3,半日/避免高,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,wet,3,全日/避免高,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,wet,3,半日/避免中以上,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,motion,5,2h/避免高,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,motion,5,半日/避免高,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,motion,5,全日/避免高,False,False,False,False,False
+gigas_jungle,喜寶 呈獻 巨人森林,motion,5,半日/避免中以上,False,False,False,False,False
+exploration_r,探索號 R,sound,5,2h/避免高,False,False,False,False,False
+exploration_r,探索號 R,sound,5,半日/避免高,False,False,False,False,False
+exploration_r,探索號 R,sound,5,全日/避免高,False,True,False,True,False
+exploration_r,探索號 R,sound,5,半日/避免中以上,False,False,False,False,False
+exploration_r,探索號 R,light,5,2h/避免高,False,False,False,False,False
+exploration_r,探索號 R,light,5,半日/避免高,False,False,False,False,False
+exploration_r,探索號 R,light,5,全日/避免高,False,False,False,False,False
+exploration_r,探索號 R,light,5,半日/避免中以上,False,False,False,False,False
+exploration_r,探索號 R,crowd,3,2h/避免高,False,False,False,False,False
+exploration_r,探索號 R,crowd,3,半日/避免高,False,False,False,False,False
+exploration_r,探索號 R,crowd,3,全日/避免高,False,False,False,False,False
+exploration_r,探索號 R,crowd,3,半日/避免中以上,False,False,False,False,False
+exploration_r,探索號 R,enclosed,3,2h/避免高,False,False,False,False,False
+exploration_r,探索號 R,enclosed,3,半日/避免高,False,False,False,False,False
+exploration_r,探索號 R,enclosed,3,全日/避免高,False,False,False,False,False
+exploration_r,探索號 R,enclosed,3,半日/避免中以上,False,False,False,False,False
+exploration_r,探索號 R,smell,1,2h/避免高,False,False,False,False,False
+exploration_r,探索號 R,smell,1,半日/避免高,False,False,False,False,False
+exploration_r,探索號 R,smell,1,全日/避免高,False,False,False,False,False
+exploration_r,探索號 R,smell,1,半日/避免中以上,False,False,False,False,False
+exploration_r,探索號 R,cold,3,2h/避免高,False,False,False,False,False
+exploration_r,探索號 R,cold,3,半日/避免高,False,False,False,False,False
+exploration_r,探索號 R,cold,3,全日/避免高,False,False,False,False,False
+exploration_r,探索號 R,cold,3,半日/避免中以上,False,False,False,False,False
+exploration_r,探索號 R,wet,1,2h/避免高,False,False,False,False,False
+exploration_r,探索號 R,wet,1,半日/避免高,False,False,False,False,False
+exploration_r,探索號 R,wet,1,全日/避免高,False,False,False,False,False
+exploration_r,探索號 R,wet,1,半日/避免中以上,False,False,False,False,False
+exploration_r,探索號 R,motion,3,2h/避免高,False,False,False,False,False
+exploration_r,探索號 R,motion,3,半日/避免高,False,False,False,False,False
+exploration_r,探索號 R,motion,3,全日/避免高,False,False,False,False,False
+exploration_r,探索號 R,motion,3,半日/避免中以上,False,False,False,False,False

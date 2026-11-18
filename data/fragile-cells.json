@@ -1,0 +1,148 @@
+{
+ "note": "由 scripts/fragile_cells.py 重算生成，勿手改；來源為 sim_sensory.oat 的單格擾動。",
+ "cells_total": 136,
+ "fragile_cells": 12,
+ "fragile_stations": 10,
+ "cells": [
+  {
+   "id": "carousel",
+   "station": "幻彩旋轉馬",
+   "dim": "sound",
+   "value": 5,
+   "scenarios": [
+    "半日/避免高",
+    "全日/避免高"
+   ],
+   "relax_flips": true,
+   "tighten_flips": false
+  },
+  {
+   "id": "choo_choo_train",
+   "station": "砵砵火車頭",
+   "dim": "sound",
+   "value": 5,
+   "scenarios": [
+    "半日/避免高",
+    "全日/避免高"
+   ],
+   "relax_flips": true,
+   "tighten_flips": false
+  },
+  {
+   "id": "exploration_r",
+   "station": "探索號 R",
+   "dim": "sound",
+   "value": 5,
+   "scenarios": [
+    "全日/避免高"
+   ],
+   "relax_flips": true,
+   "tighten_flips": false
+  },
+  {
+   "id": "grand_aquarium",
+   "station": "海洋奇觀",
+   "dim": "crowd",
+   "value": 5,
+   "scenarios": [
+    "半日/避免高",
+    "全日/避免高"
+   ],
+   "relax_flips": true,
+   "tighten_flips": false
+  },
+  {
+   "id": "meerkat_tortoise_journey",
+   "station": "小狐獴與大象龜之旅",
+   "dim": "crowd",
+   "value": 3,
+   "scenarios": [
+    "半日/避免中以上"
+   ],
+   "relax_flips": false,
+   "tighten_flips": true
+  },
+  {
+   "id": "meerkat_tortoise_journey",
+   "station": "小狐獴與大象龜之旅",
+   "dim": "sound",
+   "value": 3,
+   "scenarios": [
+    "半日/避免中以上"
+   ],
+   "relax_flips": false,
+   "tighten_flips": true
+  },
+  {
+   "id": "panda_adventure",
+   "station": "大熊貓之旅",
+   "dim": "crowd",
+   "value": 5,
+   "scenarios": [
+    "半日/避免高",
+    "全日/避免高"
+   ],
+   "relax_flips": true,
+   "tighten_flips": false
+  },
+  {
+   "id": "sichuan_treasures",
+   "station": "香港賽馬會四川奇珍館",
+   "dim": "crowd",
+   "value": 5,
+   "scenarios": [
+    "2h/避免高",
+    "半日/避免高",
+    "全日/避免高"
+   ],
+   "relax_flips": true,
+   "tighten_flips": false
+  },
+  {
+   "id": "sky_adventure",
+   "station": "昇空奇遇",
+   "dim": "sound",
+   "value": 5,
+   "scenarios": [
+    "半日/避免高",
+    "全日/避免高"
+   ],
+   "relax_flips": true,
+   "tighten_flips": false
+  },
+  {
+   "id": "sloth_and_friends",
+   "station": "樹懶與好友",
+   "dim": "crowd",
+   "value": 3,
+   "scenarios": [
+    "半日/避免中以上"
+   ],
+   "relax_flips": false,
+   "tighten_flips": true
+  },
+  {
+   "id": "sloth_and_friends",
+   "station": "樹懶與好友",
+   "dim": "sound",
+   "value": 3,
+   "scenarios": [
+    "半日/避免中以上"
+   ],
+   "relax_flips": false,
+   "tighten_flips": true
+  },
+  {
+   "id": "water_world",
+   "station": "環迴水世界",
+   "dim": "sound",
+   "value": 5,
+   "scenarios": [
+    "半日/避免高",
+    "全日/避免高"
+   ],
+   "relax_flips": true,
+   "tighten_flips": false
+  }
+ ]
+}

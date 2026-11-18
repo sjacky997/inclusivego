@@ -70,7 +70,12 @@ TEMPLATE = """<!DOCTYPE html>
   .story{font-size:13px;color:#3a4a45;background:var(--green-soft);
     border-left:3px solid var(--green);padding:9px 12px;border-radius:0 6px 6px 0;margin:10px 0}
   .story b{display:block;color:var(--green);font-size:12px;margin-bottom:2px}
-  .legend{display:flex;gap:14px;align-items:center;color:var(--muted);font-size:12px;margin-top:4px}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;align-items:center;color:var(--muted);font-size:12px;margin-top:6px}
+  .badge text{pointer-events:none}
+  .ring5{fill:none;stroke:var(--l5);stroke-width:2;stroke-dasharray:2 4}
+  .ring3{fill:none;stroke:var(--l3);stroke-width:2;stroke-dasharray:6 5}
+  .frag{background:#fdf3f2;border-left:3px solid var(--l5);padding:9px 12px;border-radius:0 6px 6px 0;margin:10px 0;font-size:12.5px;color:#3a2b2a}
+  .frag b{display:block;color:var(--l5);font-size:12px;margin-bottom:4px}
   .dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:-1px}
   footer{color:var(--muted);font-size:12px;padding:14px 28px 26px;border-top:1px solid var(--line);background:#fff}
   @media (max-width:900px){.wrap{grid-template-columns:1fr}.mapbox{border-right:0;border-bottom:1px solid var(--line)}}
@@ -79,7 +84,7 @@ TEMPLATE = """<!DOCTYPE html>
 <body>
 <header>
   <h1>InclusiveGo 感官示意地圖</h1>
-  <div class="sub">17 個站點 · 四區 · 感官值 1–5，數值越低越適合感官敏感旅客。點擊站點查看細節。</div>
+  <div class="sub">17 個站點 · 四區 · 感官值 1–5，數值越低越適合感官敏感旅客。點擊站點查看細節；站點旁的 ×1／×2 表示該站有幾個脆弱格（一偏一級就翻轉的格子）。</div>
 </header>
 
 <div class="wrap">
@@ -95,6 +100,8 @@ TEMPLATE = """<!DOCTYPE html>
       <span><i class="dot" style="background:var(--l3)"></i>3 中</span>
       <span><i class="dot" style="background:var(--l5)"></i>4–5 高</span>
       <span>虛線＝按分區順序的示意動線，非實際步行路徑</span>
+      <span><b style="color:var(--l5)">×2</b>＝脆弱格數量（僅總覽時顯示，2 個代表該站有兩格一偏就翻轉）</span>
+      <span>外環＝該維度下的脆弱格（紅＝值 5，降一級即納入；琥珀＝值 3，升一級即排除）</span>
     </div>
   </div>
   <aside id="panel">
@@ -111,6 +118,7 @@ TEMPLATE = """<!DOCTYPE html>
 
 <script>
 const STATIONS = __DATA__;
+const FRAGILE = __FRAGILE__;
 
 const DIMS = [
   ["sound","聲音"],["light","光線"],["crowd","人群"],["enclosed","封閉感"],
@@ -123,7 +131,14 @@ const ACCESS_LABEL = {
   exit_ease:"離場容易度", staff_interaction:"職員互動"
 };
 
-let dim = "sound";
+const CELLS_BY_STATION = {};
+FRAGILE.cells.forEach(c=>{
+  (CELLS_BY_STATION[c.id] = CELLS_BY_STATION[c.id] || []).push(c);
+});
+function cellsFor(id){ return CELLS_BY_STATION[id] || []; }
+function cellFor(id, d){ return cellsFor(id).find(c=>c.dim === d) || null; }
+
+let dim = null;   // 預設總覽：顯示八維最大值與脆弱格徽章；選定維度則切換為外環模式
 let onlyFive = false;
 let showRoute = false;
 let selected = null;
@@ -146,9 +161,9 @@ const LAYOUT = (()=>{
     const minY = Math.min(...pts.map(p=>p.point.y));
     const maxY = Math.max(...pts.map(p=>p.point.y));
     const span = Math.max(maxY - minY, 60);
-    const height = Math.max(126, pts.length * 34 + 58);
+    const height = Math.max(150, pts.length * 42 + 74);
     out[zone] = {top:y, height, minY, span, scale:(height - 58) / span};
-    y += height + 18;
+    y += height + 22;
   });
   out.__viewH = y + 20;
   return out;
@@ -185,8 +200,21 @@ function drawDims(){
   });
 }
 
+// 徽章避讓：三個候選位置，取第一個不與已放置徽章太近的
+const badgeSpots = [];
+function placeBadge(s){
+  const cy = fy(s);
+  const cands = [
+    {x:s.point.x+17, y:cy-15}, {x:s.point.x-17, y:cy-15}, {x:s.point.x+17, y:cy+16},
+  ];
+  const spot = cands.find(c=>!badgeSpots.some(b=>Math.abs(b.x-c.x)<26 && Math.abs(b.y-c.y)<20)) || cands[0];
+  badgeSpots.push(spot);
+  return spot;
+}
+
 function render(){
   svg.innerHTML = "";
+  badgeSpots.length = 0;
   svg.setAttribute("viewBox", `0 0 1180 ${LAYOUT.__viewH}`);
 
   // 區域色帶（帶狀佈局）
@@ -237,13 +265,31 @@ function render(){
     const g = el("g", {class:"node" + (selected === s.id ? " selected":""),
       "data-id": s.id});
     const cy = fy(s);
+    // A：當前維度下的脆弱格外環（只有選了具體維度才顯示）
+    const fcell = dim && selected !== s.id ? cellFor(s.id, dim) : null;
+    if (fcell){
+      g.appendChild(el("circle", {cx:s.point.x, cy, r:22,
+        class: fcell.value === 5 ? "ring5" : "ring3"}));
+    }
     g.appendChild(el("circle", {cx:s.point.x, cy, r:16,
       fill: colorFor(v), stroke:"#fff", "stroke-width":2}));
     const val = el("text", {x:s.point.x, y:cy+4.5, "text-anchor":"middle",
       style:"font-size:12px;fill:#fff;font-weight:600"});
     val.textContent = v;
     g.appendChild(val);
-    g.appendChild(el("title", {})).textContent = s.name + "｜" + s.zone;
+    // B：常駐徽章，只顯示「該站有幾個脆弱格」；篩選到只剩 5 級時關掉，避免與過濾結果打架
+    const cells = cellsFor(s.id);
+    if (!onlyFive && !dim && cells.length){
+      const spot = placeBadge(s);
+      const bg = el("g", {class:"badge"});
+      const bt = el("text", {x:spot.x, y:spot.y+4, "text-anchor":"middle",
+        style:"font-size:12px;font-weight:700;fill:var(--l5);paint-order:stroke;stroke:#fff;stroke-width:3px"});
+      bt.textContent = "×" + cells.length;
+      bg.appendChild(bt);
+      g.appendChild(bg);
+    }
+    g.appendChild(el("title", {})).textContent =
+      s.name + "｜" + s.zone + (cells.length ? "｜脆弱格 " + cells.length + " 個" : "｜無脆弱格");
     g.onclick = () => { selected = s.id; render(); renderPanel(s); };
     svg.appendChild(g);
   });
@@ -289,6 +335,27 @@ function bar(v){
   return `<span class="bar" style="width:${w}px;background:${v>=4?"var(--l5)":v>=3?"var(--l3)":"var(--l1)"}"></span>`;
 }
 
+function fragileHtml(s){
+  const cells = cellsFor(s.id);
+  if (!cells.length){
+    return `<div class="frag"><b>脆弱度</b>此站八維皆不在脆弱格清單：任何一格上下偏一級，都不改變它在四個情境下的納入結果。</div>`;
+  }
+  const rows = cells.map(c=>{
+    const dir = c.value === 5 ? "降一級即納入" : "升一級即排除";
+    return `<tr><td>${DIMS.find(d=>d[0]===c.dim)[1]}</td>
+      <td style="text-align:center">${c.value}</td>
+      <td>${dir}</td><td style="text-align:center">${c.scenarios.length}</td></tr>`;
+  }).join("");
+  const names = cells.map(c=>c.scenarios).flat();
+  const uniq = [...new Set(names)];
+  return `<div class="frag"><b>脆弱度：${cells.length} 個脆弱格</b>
+    <table style="margin:6px 0 6px"><thead><tr><th style="width:52px">維度</th><th style="width:40px;text-align:center">現值</th>
+    <th>方向</th><th style="width:44px;text-align:center">情境</th></tr></thead>
+    <tbody>${rows}</tbody></table>
+    涉及情境：${uniq.join("、")}。<br>
+    「脆弱」指決策餘量只剩一級，不是數據不確定度本身；現場量這一格就能消掉它的不確定性。</div>`;
+}
+
 function renderPanel(s){
   const rows = DIMS.map(([k,label])=>
     `<tr><td>${label}</td><td class="num">${s.sensory[k]}　${LEVEL_NAME[s.sensory[k]]}${bar(s.sensory[k])}</td></tr>`
@@ -306,6 +373,7 @@ function renderPanel(s){
     <div class="story"><b>我會經歷什麼</b>${s.story.experience}</div>
     <div class="story"><b>可以先準備</b>${s.story.prep}</div>
     <table><thead><tr><th>無障礙資訊</th><th>狀態</th></tr></thead><tbody>${accessRows}</tbody></table>
+    ${fragileHtml(s)}
     <div class="meta">無障礙五欄尚未現場採集，一律顯示「未確認」。這裡的「未確認」不是「可通行」。</div>
   `;
 }
@@ -349,8 +417,13 @@ def main() -> None:
         for s in stations
     ]
     data_js = json.dumps(slim, ensure_ascii=False, separators=(",", ":"))
-    OUT.write_text(TEMPLATE.replace("__DATA__", data_js), encoding="utf-8")
-    print(f"已寫入 {OUT.relative_to(ROOT)}：{len(slim)} 站，{OUT.stat().st_size} bytes")
+    fragile = json.loads((ROOT / "data" / "fragile-cells.json").read_text(encoding="utf-8"))
+    fragile_js = json.dumps(fragile, ensure_ascii=False, separators=(",", ":"))
+    OUT.write_text(
+        TEMPLATE.replace("__DATA__", data_js).replace("__FRAGILE__", fragile_js),
+        encoding="utf-8",
+    )
+    print(f"已寫入 {OUT.relative_to(ROOT)}：{len(slim)} 站、{fragile['fragile_cells']} 個脆弱格，{OUT.stat().st_size} bytes")
 
 
 if __name__ == "__main__":

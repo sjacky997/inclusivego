@@ -43,3 +43,5 @@ jobs:
         run: python3 -m unittest discover -s tests -v
       - name: Check frontend JS syntax
         run: python3 scripts/check_frontend.py
+      - name: Check robustness baseline
+        run: python3 scripts/sim_check.py

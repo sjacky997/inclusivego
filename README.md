@@ -17,12 +17,14 @@
 | `tests/test_planner.py` | 求解器不變量測試 | 開發者 |
 | `.github/workflows/data-validate.yml` | CI，push 時驗證資料並跑測試 | 開發者 |
 
-## 三個指令
+## 常用指令
 
 ```bash
-pip install -r requirements.txt   # 首次
-python3 scripts/validate.py      # 驗證資料
-python3 serve.py                 # 驗證通過後開站
+python3 -m pip install -r requirements.txt   # 首次
+python3 scripts/validate.py                  # 驗證資料
+python3 serve.py                             # 驗證通過後開站
+bash scripts/reproduce.sh                    # 五步全跑（含穩健度基準）
+python3 scripts/build_map.py                 # 重新生成 map.html
 ```
 
 ## 一筆資料長這樣
@@ -119,7 +121,22 @@ POST /api/plan
 
 前端行為：提交問卷後自動請求路線；切換景點會重新求解；摘要卡顯示選中站數、預計分鐘、休息次數、未納入清單與排除原因。若未以 `serve.py` 啟動（例如直接雙擊 `index.html`），會顯示提示並暫時按舊次序排列。
 
-測試：`python3 -m unittest discover -s tests -v`（33 條，含端點測試）。
+測試：`python3 -m unittest discover -s tests -v`（40 條，含端點測試與 handling 語義）。
+
+一鍵重現：`bash scripts/reproduce.sh`（五步：資料契約 → 單元測試 → 固定輸入雜湊 → 穩健度基準 → 前端語法）。別人 clone 這份儲存庫跑同一條指令，應得到同一組數字；`scripts/expected_sim.json` 是穩健度基準，改動若使其不符，CI 的 `sim_check` 會以 1 退出。
+
+## 示意地圖
+
+`map.html` 是獨立單檔（內嵌資料、`file://` 直接可開），呈現 17 站與四區的感官分佈：
+
+- 切換八個維度，看同一組站點在不同觸發條件下的差異；
+- 「只顯示 5 級」對應 8 個 5 級站，也是穩健度分析裡「降一級即納入」的那批；
+- 點站點顯示八維數值、停留時間、步行分鐘與無障礙五欄（現皆「未確認」）。
+
+`map.html` 是生成物，來源是 `data/facilities.json`：改資料後執行 `python3 scripts/build_map.py` 重新生成。
+CI 會重跑該腳本並比對 `git diff --exit-code map.html`，生成物與源碼不一致即失敗。
+
+地圖為版面示意，未按實際地理比例或方位；「建議動線」是分區順序的連線，不是實際步行路徑。
 
 ## 常見問題
 
@@ -131,4 +148,6 @@ POST /api/plan
 
 ## 版本
 
-`2026.11.1`｜最後更新 2026-11-16｜access 欄位待公園核實
+`2026.11.10`｜最後更新 2026-11-18｜access 欄位與 12 格感官值待現場核實
+
+自 `2026.11.5` 起含 `walk_min` 與敏感度分析；`2026.11.7`–`2026.11.9` 加入穩健度模擬、CI 護欄、附錄 F 與 handling 語義文件；`2026.11.10` 加入示意地圖與生成物一致性檢查。

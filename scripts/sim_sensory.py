@@ -219,6 +219,51 @@ def summarize(payload: dict, joints: list[dict], rows: list[dict]) -> str:
     return "\n".join(lines)
 
 
+def metrics(payload: dict, scenarios: list[Scenario], runs: int, seed: int) -> dict:
+    """把穩健度的關鍵數字整理成可機器比對的結構（供 scripts/sim_check.py 比對）。"""
+    rng = random.Random(seed)
+    joints = [joint_runs(payload, s, runs, rng) for s in scenarios]
+    rows = oat(payload, scenarios)
+    fragile: dict[str, set] = {}
+    for r in rows:
+        if r["flip_plus1"] or r["flip_minus1"]:
+            fragile.setdefault(r["scenario"], set()).add((r["station_id"], r["dim"]))
+    known = [joint_runs(payload, s, runs, rng, fragile.get(s.label, set())) for s in scenarios]
+
+    cells1 = {(r["station_id"], r["dim"]) for r in rows if r["flip_plus1"] or r["flip_minus1"]}
+    combos1 = sum(1 for r in rows if r["flip_plus1"] or r["flip_minus1"])
+    combos2 = sum(
+        1
+        for r in rows
+        if (r["flip_plus2"] or r["flip_minus2"]) and not (r["flip_plus1"] or r["flip_minus1"])
+    )
+    return {
+        "seed": seed,
+        "runs": runs,
+        "cells_total": len(payload["facilities"]) * len(DIMS),
+        "stations_total": len(payload["facilities"]),
+        "fragile_cells": len(cells1),
+        "fragile_stations": len({sid for sid, _ in cells1}),
+        "combos_total": len(rows),
+        "combos_flip_1": combos1,
+        "combos_flip_2": combos2,
+        "scenarios": [
+            {
+                "label": j["label"],
+                "baseline_size": j["baseline_size"],
+                "mean_size": round(j["mean_size"], 3),
+                "identical": round(j["identical_rate"], 3),
+                "jaccard": round(j["jaccard_mean"], 3),
+                "jaccard_p05": round(j["jaccard_p05"], 3),
+                "fixed_cells": len(fragile.get(j["label"], set())),
+                "identical_fixed": round(k["identical_rate"], 3),
+                "jaccard_fixed": round(k["jaccard_mean"], 3),
+            }
+            for j, k in zip(joints, known)
+        ],
+    }
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="感官值穩健度模擬")
     ap.add_argument("--runs", type=int, default=1000)
@@ -231,10 +276,16 @@ def main() -> int:
         action="store_true",
         help="把各情境下一級內脆弱（m=1）的格視為已實測，重跑聯合抽樣，量化複核的收益",
     )
+    ap.add_argument("--json", action="store_true", help="輸出可機器比對的關鍵數字（供 CI 比對）")
     args = ap.parse_args()
 
     payload = load_facilities(Path(args.data))
     scenarios = [Scenario(label, budget, handling) for label, budget, handling in SCENARIOS]
+
+    if args.json:
+        print(json.dumps(metrics(payload, scenarios, args.runs, args.seed), ensure_ascii=False, indent=1))
+        return 0
+
     rng = random.Random(args.seed)
 
     joints = [joint_runs(payload, s, args.runs, rng) for s in scenarios]

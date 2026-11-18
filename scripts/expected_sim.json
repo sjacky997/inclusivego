@@ -1,0 +1,57 @@
+{
+ "seed": 20261118,
+ "runs": 1000,
+ "cells_total": 136,
+ "stations_total": 17,
+ "fragile_cells": 12,
+ "fragile_stations": 10,
+ "combos_total": 544,
+ "combos_flip_1": 20,
+ "combos_flip_2": 18,
+ "scenarios": [
+  {
+   "label": "2h/避免高",
+   "baseline_size": 4,
+   "mean_size": 4.183,
+   "identical": 0.746,
+   "jaccard": 0.924,
+   "jaccard_p05": 0.6,
+   "fixed_cells": 1,
+   "identical_fixed": 0.827,
+   "jaccard_fixed": 0.956
+  },
+  {
+   "label": "半日/避免高",
+   "baseline_size": 6,
+   "mean_size": 7.151,
+   "identical": 0.167,
+   "jaccard": 0.81,
+   "jaccard_p05": 0.625,
+   "fixed_cells": 7,
+   "identical_fixed": 0.897,
+   "jaccard_fixed": 0.985
+  },
+  {
+   "label": "全日/避免高",
+   "baseline_size": 6,
+   "mean_size": 7.745,
+   "identical": 0.158,
+   "jaccard": 0.793,
+   "jaccard_p05": 0.6,
+   "fixed_cells": 8,
+   "identical_fixed": 0.897,
+   "jaccard_fixed": 0.985
+  },
+  {
+   "label": "半日/避免中以上",
+   "baseline_size": 6,
+   "mean_size": 5.305,
+   "identical": 0.415,
+   "jaccard": 0.884,
+   "jaccard_p05": 0.667,
+   "fixed_cells": 4,
+   "identical_fixed": 1.0,
+   "jaccard_fixed": 1.0
+  }
+ ]
+}

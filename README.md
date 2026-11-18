@@ -88,7 +88,7 @@ python3 -m unittest discover -s tests -v
 
 實測：p95 延遲 0.3 毫秒，跨區動態規劃轉移 75 次。
 
-感官門檻的判準與改動理由見 [`docs/sensory-rubric.md`](docs/sensory-rubric.md)；一鍵重現（驗證＋測試＋固定輸入雜湊＋穩健度數字＋前端語法）跑 `bash scripts/reproduce.sh`。
+感官門檻的判準與改動理由見 [`docs/sensory-rubric.md`](docs/sensory-rubric.md)；四個避開模式（含 `warn-only` 與 `decide-later` 的唯一差別）見 [`docs/handling-semantics.md`](docs/handling-semantics.md)；一鍵重現（驗證＋測試＋固定輸入雜湊＋穩健度數字＋前端語法）跑 `bash scripts/reproduce.sh`。
 
 感官估值有多不確定、哪幾格在支撐路線，跑 `python3 scripts/sim_sensory.py`；結果寫在 [`docs/sensory-robustness.md`](docs/sensory-robustness.md)。報告裡的數字有回歸護欄：`python3 scripts/sim_check.py` 會比對 `scripts/expected_sim.json`，數字變了這一步就紅。
 

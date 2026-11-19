@@ -6,3 +6,4 @@ downloaded/
 .wordtmp/
 sim_sensory_cells.csv
 tests/
+requirements.txt

@@ -86,6 +86,30 @@ def application(environ, start_response):
     method = environ.get("REQUEST_METHOD", "GET")
     path = environ.get("PATH_INFO", "/") or "/"
 
+    if path.rstrip("/") == "/api/pdf" and method == "POST":
+        try:
+            payload_body = _read_body(environ)
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            return _json_response(start_response, "400 Bad Request", {"error": "請求格式不正確"})
+        try:
+            from pdfgen import build_pdf
+        except ImportError:
+            return _json_response(start_response, "503 Service Unavailable", {"error": "伺服器未安裝 reportlab，無法產生 PDF"})
+        try:
+            pdf_bytes = build_pdf(payload_body)
+        except Exception as exc:
+            return _json_response(start_response, "500 Internal Server Error", {"error": f"PDF 產生失敗：{exc}"})
+        start_response(
+            "200 OK",
+            [
+                ("Content-Type", "application/pdf"),
+                ("Content-Length", str(len(pdf_bytes))),
+                ("Content-Disposition", 'attachment; filename="InclusiveGo-story.pdf"'),
+                ("Cache-Control", "no-store"),
+            ],
+        )
+        return [pdf_bytes]
+
     if path.rstrip("/") == "/api/plan":
         if method == "OPTIONS":
             start_response("204 No Content", [("Access-Control-Allow-Origin", "*")])

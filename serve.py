@@ -60,12 +60,16 @@ class InclusiveGoHandler(SimpleHTTPRequestHandler):
     server_version = "InclusiveGo/1.0"
 
     def do_POST(self) -> None:  # noqa: N802（http.server 的命名約定）
-        if self.path.split("?", 1)[0] != "/api/plan":
-            self._send_json(404, {"error": "找不到這個端點"})
-            return
-
+        path = self.path.split("?", 1)[0]
         length = int(self.headers.get("Content-Length") or 0)
         raw = self.rfile.read(length) if length else b"{}"
+
+        if path == "/api/pdf":
+            self._send_pdf(raw)
+            return
+        if path != "/api/plan":
+            self._send_json(404, {"error": "找不到這個端點"})
+            return
 
         try:
             payload = json.loads(raw.decode("utf-8"))
@@ -95,6 +99,33 @@ class InclusiveGoHandler(SimpleHTTPRequestHandler):
             self._send_json(400, {"error": f"請求格式不正確：{exc}"})
         except Exception as exc:  # 不讓單次失敗拖垮整個站
             self._send_json(500, {"error": f"求解器執行失敗：{exc}"})
+
+    def _send_pdf(self, raw: bytes) -> None:
+        try:
+            from pdfgen import build_pdf
+        except ImportError:
+            self._send_json(503, {"error": "伺服器未安裝 reportlab，無法產生 PDF"})
+            return
+
+        try:
+            payload = json.loads(raw.decode("utf-8")) if raw else {}
+            body = build_pdf(payload)
+        except ValueError as exc:
+            self._send_json(400, {"error": str(exc)})
+            return
+        except Exception as exc:
+            self._send_json(500, {"error": f"PDF 產生失敗：{exc}"})
+            return
+
+        self.send_response(200)
+        self.send_header("Content-Type", "application/pdf")
+        self.send_header("Content-Length", str(len(body)))
+        self.send_header("Content-Disposition", "attachment; filename=\"InclusiveGo-story.pdf\"")
+        self.end_headers()
+        try:
+            self.wfile.write(body)
+        except BrokenPipeError:
+            pass
 
     def _send_json(self, status: int, data: dict) -> None:
         body = json.dumps(data, ensure_ascii=False).encode("utf-8")

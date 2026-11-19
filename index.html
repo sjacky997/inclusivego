@@ -319,7 +319,20 @@
       position: absolute; inset: 0;
       background: linear-gradient(100deg, rgba(6, 35, 73, 0) 45%, rgba(4, 26, 56, 0.55) 100%);
     }
-    @media (max-width: 1080px) { .ig-cover-visual { display: none; } }
+    @media (max-width: 1080px) {
+      .ig-cover-visual {
+        inset: 0;
+        width: 100%;
+        background-position: 50% 28%;
+        background-size: cover;
+        -webkit-mask-image: none;
+                mask-image: none;
+        opacity: 0.55;
+      }
+      .ig-cover-visual::after {
+        background: linear-gradient(180deg, rgba(6, 35, 73, 0.86) 0%, rgba(6, 35, 73, 0.5) 42%, rgba(4, 26, 56, 0.9) 100%);
+      }
+    }
     .ig-cover-chip {
       display: inline-flex; align-items: center; gap: 8px;
       padding: 6px 14px; border-radius: 999px;
@@ -990,6 +1003,86 @@
         };
         if (printDocument.fonts?.ready) printDocument.fonts.ready.then(openPrint); else setTimeout(openPrint,300);
       }
+      function buildPdfPayload() {
+        const ordered = plannedNames();
+        const triggerText = state.triggers.map(value=>answerText('triggers',value)).join('、') || '未選擇';
+        const mealEnvironment = state.mealEnv.map(value=>answerText('mealEnv',value)).join('、') || '沒有特別選擇';
+        const created = new Intl.DateTimeFormat('zh-HK',{year:'numeric',month:'long',day:'numeric'}).format(new Date());
+        const subOf = name => `${areaMap[name]}・${facilityData[name].duration}${breakNote(name)}`;
+        return {
+          brand: 'InclusiveGo 共融智遊',
+          title: '我的海濱樂園行前故事',
+          subtitle: '出發前準備 × 個人化路線 × 社交故事',
+          meta: [`建立日期：${created}`],
+          summary: {
+            heading: '我的需要與安排',
+            rows: [
+              ['較敏感情況', triggerText],
+              ['刺激安排', answerText('handling', state.handling)],
+              ['逗留時間', answerText('duration', state.duration)],
+              ['休息頻率', answerText('rest', state.rest)],
+              ['路線優先方式', answerText('priority', state.priority)],
+              ['用餐安排', `${answerText('meal', state.meal)}；${mealEnvironment}`],
+            ],
+          },
+          checklist: { heading: '我的出發前準備清單', items: checklistItems().map(item=>item[1]) },
+          route: {
+            heading: '我的建議路線',
+            items: ordered.map(name=>({ title: name, sub: subOf(name) })),
+          },
+          stories: ordered.map((name, index) => {
+            const data = facilityData[name];
+            return {
+              no: index + 1,
+              title: name,
+              sub: subOf(name),
+              sensory: data.sensory.map((level, i) => `${sensoryTypes[sensoryKeys[i]][0]}｜${levelName[level]}`).join('　'),
+              access: ACCESS_FIELDS.map(([key, label]) => `${label}｜${accessValue((data.access || {})[key])}`).join('　'),
+              experience: data.experience,
+              prep: data.prep,
+            };
+          }),
+          footnote: `建立日期：${created}。設施開放、輪候、動物出現及餐飲安排可能改變，請在到訪當日查閱海洋公園官方最新資料及遵從職員指示。`,
+        };
+      }
+      async function downloadPersonalizedPdf() {
+        const status = root.querySelector('#ig-download-status');
+        if (!routeFacilities.length) {
+          if (status) status.textContent = '請先在「配對景點」加入最少一個景點。';
+          setResultView('matches');
+          return;
+        }
+        if (status) status.textContent = '正在建立 PDF…';
+        try {
+          const res = await fetch('/api/pdf', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(buildPdfPayload()),
+          });
+          if (!res.ok) {
+            let reason = `HTTP ${res.status}`;
+            try {
+              const data = await res.json();
+              if (data && data.error) reason = data.error;
+            } catch (_) { /* 回應不是 JSON 時保留狀態碼 */ }
+            throw new Error(reason);
+          }
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'InclusiveGo_個人化行前故事.pdf';
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 5000);
+          if (status) status.textContent = '已開始下載 PDF。';
+        } catch (err) {
+          console.error('[InclusiveGo] PDF 直接下載失敗，改用列印視窗', err);
+          if (status) status.textContent = `未能直接下載（${err.message}），已改用列印視窗。`;
+          generatePersonalizedPdf();
+        }
+      }
       function updateResultCount() {
         const plannedCount = planState && planState.order ? planState.order.filter(name => routeFacilities.includes(name)).length : routeFacilities.length;
         root.querySelector('#ig-result-count').textContent = `${plannedCount}／${routeFacilities.length} 站已排入路線`;
@@ -1022,9 +1115,9 @@
       root.querySelector('#ig-result-next').addEventListener('click',()=>{
         if (resultView==='matches') setResultView('map');
         else if (resultView==='map') setResultView('guide');
-        else generatePersonalizedPdf();
+        else downloadPersonalizedPdf();
       });
-      root.querySelector('#ig-generate-pdf').addEventListener('click',generatePersonalizedPdf);
+      root.querySelector('#ig-generate-pdf').addEventListener('click',downloadPersonalizedPdf);
       root.querySelector('#ig-replay-route').addEventListener('click',()=>renderMap());
       root.querySelector('#ig-next').addEventListener('click', () => {
         const error = validate(); if (error) { root.querySelector('#ig-error').textContent = error; return; }

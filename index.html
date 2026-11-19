@@ -281,7 +281,120 @@
       .ig-progress-fill { transition: none; }
       .ig-route-draw { animation: none; stroke-dashoffset: 0; }
     }
+
+    /* ── 封面 ── */
+    .ig-cover {
+      position: relative;
+      overflow: hidden;
+      min-height: calc(100vh - 32px);
+      display: flex;
+      align-items: center;
+      padding: 56px clamp(20px, 5vw, 64px);
+      background: radial-gradient(120% 90% at 82% 8%, #0b3f96 0%, #062349 52%, #041a38 100%);
+      color: #ffffff;
+      border-radius: 24px;
+    }
+    .ig-cover::after {
+      content: "";
+      position: absolute;
+      right: -18%; bottom: -40%;
+      width: 78%; height: 92%;
+      background: radial-gradient(closest-side, rgba(215, 255, 63, 0.18), rgba(215, 255, 63, 0) 72%);
+      pointer-events: none;
+    }
+    .ig-cover-inner { position: relative; z-index: 1; width: 100%; max-width: 1060px; margin: 0 auto; }
+    .ig-cover-visual {
+      position: absolute;
+      right: 0; top: 0; bottom: 0;
+      width: min(52%, 760px);
+      background-image: url("assets/cover-night.jpg");
+      background-size: cover;
+      background-position: 58% 52%;
+      -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.35) 22%, rgba(0, 0, 0, 0.9) 52%, #000 100%);
+              mask-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.35) 22%, rgba(0, 0, 0, 0.9) 52%, #000 100%);
+      pointer-events: none;
+    }
+    .ig-cover-visual::after {
+      content: "";
+      position: absolute; inset: 0;
+      background: linear-gradient(100deg, rgba(6, 35, 73, 0) 45%, rgba(4, 26, 56, 0.55) 100%);
+    }
+    @media (max-width: 1080px) { .ig-cover-visual { display: none; } }
+    .ig-cover-chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px; border-radius: 999px;
+      background: var(--ig-lime); color: #062349;
+      font-size: 14px; font-weight: 700; letter-spacing: 0.02em;
+    }
+    .ig-cover-title {
+      margin: 22px 0 0;
+      font-size: clamp(34px, 5.6vw, 60px);
+      line-height: 1.1; font-weight: 800; letter-spacing: -0.01em;
+    }
+    .ig-cover-title em { font-style: normal; color: var(--ig-lime); }
+    .ig-cover-sub { margin: 12px 0 0; font-size: clamp(17px, 2.2vw, 23px); font-weight: 600; color: #dbe8ff; }
+    .ig-cover-lede { margin: 18px 0 0; max-width: 44ch; font-size: clamp(15px, 1.5vw, 17px); line-height: 1.8; color: #c2d6f6; }
+    .ig-cover-grid {
+      margin: 30px 0 0; padding: 0; list-style: none;
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px; max-width: 700px;
+    }
+    .ig-cover-grid li {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 16px; border-radius: 14px;
+      background: rgba(6, 35, 73, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      font-size: 15px;
+    }
+    .ig-cover-grid li i { color: var(--ig-lime); flex: none; }
+    .ig-cover-actions { margin: 32px 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+    .ig-cover-cta {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 16px 28px; border: 0; border-radius: 999px;
+      background: var(--ig-lime); color: #062349;
+      font-family: inherit; font-size: 18px; font-weight: 800; cursor: pointer;
+      transition: transform 0.15s ease, filter 0.15s ease;
+    }
+    .ig-cover-cta:hover { filter: brightness(1.06); transform: translateY(-1px); }
+    .ig-cover-cta:focus-visible { outline: 3px solid #ffffff; outline-offset: 3px; }
+    .ig-cover-alt {
+      color: #dbe8ff; font-size: 15px; text-decoration: none;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.4); padding-bottom: 2px;
+    }
+    .ig-cover-alt:hover { color: #ffffff; }
+    .ig-cover-foot { margin: 20px 0 0; font-size: 13px; color: #94afd6; }
+    #ig-questionnaire.ig-entered .ig-cover { display: none; }
+    #ig-questionnaire:not(.ig-entered) > .ig-topbar,
+    #ig-questionnaire:not(.ig-entered) > .ig-shell { display: none; }
+    @media (max-width: 760px) {
+      .ig-cover { min-height: 100vh; border-radius: 0; padding: 40px 20px; align-items: flex-start; }
+      .ig-cover-grid { grid-template-columns: 1fr; }
+      .ig-cover-cta { width: 100%; justify-content: center; }
+    }
   </style>
+
+  <section class="ig-cover" id="ig-cover" aria-labelledby="ig-cover-title">
+    <div class="ig-cover-visual" role="img" aria-label="夜色中的海濱樂園示意插畫"></div>
+    <div class="ig-cover-inner">
+      <span class="ig-cover-chip"><i data-lucide="compass" aria-hidden="true"></i>我的行程指南</span>
+      <h1 class="ig-cover-title" id="ig-cover-title">海濱樂園<br><em>安心遊</em></h1>
+      <p class="ig-cover-sub">出發前準備 ＋ 社交故事</p>
+      <p class="ig-cover-lede">讓我在出發前知道會看見甚麼、可能感受到甚麼，以及不舒服的時候可以怎樣做。</p>
+      <ul class="ig-cover-grid">
+        <li><i data-lucide="clipboard-check" aria-hidden="true"></i>我的準備清單</li>
+        <li><i data-lucide="route" aria-hidden="true"></i>建議安心路線</li>
+        <li><i data-lucide="eye" aria-hidden="true"></i>景點感官提示</li>
+        <li><i data-lucide="message-circle" aria-hidden="true"></i>簡短社交故事</li>
+      </ul>
+      <div class="ig-cover-actions">
+        <button type="button" class="ig-cover-cta" id="ig-start">開始建立我的行程<i data-lucide="arrow-right" aria-hidden="true"></i></button>
+        <a class="ig-cover-alt" href="map.html">先看感官示意地圖 ↗</a>
+      </div>
+      <p class="ig-cover-foot">7 題、約 2 分鐘・不收集個人資料・所有活動都可以略過<br>插圖為示意，不代表實際園區位置</p>
+    </div>
+  </section>
 
   <header class="ig-topbar">
     <div class="ig-brand"><span class="ig-brand-mark"><i data-lucide="route" aria-hidden="true"></i></span><span>InclusiveGo 共融智遊</span></div>
@@ -926,6 +1039,22 @@
   </script>
 </div>
 
+<script>
+(function () {
+  var root = document.getElementById('ig-questionnaire');
+  var start = document.getElementById('ig-start');
+  if (!root || !start) return;
+  function enter(ev) {
+    if (ev) ev.preventDefault();
+    root.classList.add('ig-entered');
+    window.scrollTo({ top: 0, behavior: 'auto' });
+    var next = root.querySelector('#ig-next');
+    if (next && typeof next.focus === 'function') next.focus({ preventScroll: true });
+  }
+  start.addEventListener('click', enter);
+  if (location.hash === '#start') enter();
+})();
+</script>
 <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 <script>globalThis.lucide?.createIcons({attrs:{width:16,height:16}});</script>
 </body>

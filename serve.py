@@ -9,6 +9,7 @@
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 from functools import partial
@@ -109,20 +110,30 @@ class InclusiveGoHandler(SimpleHTTPRequestHandler):
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="InclusiveGo 本地測試伺服器")
+    parser = argparse.ArgumentParser(description="InclusiveGo 測試伺服器")
     parser.add_argument("--skip-validate", action="store_true", help="跳過資料驗證")
-    parser.add_argument("--port", type=int, default=0, help="固定埠號，預設自動選一個可用埠")
+    parser.add_argument("--port", type=int, default=int(os.environ.get("PORT") or 0),
+                        help="埠號；預設讀取 PORT 環境變數，否則自動選一個可用埠")
+    parser.add_argument("--host", default=os.environ.get("IG_HOST") or "",
+                        help="綁定位址；預設雲端環境用 0.0.0.0，本機用 127.0.0.1")
+    parser.add_argument("--no-browser", action="store_true", help="啟動後不自動開瀏覽器")
     args = parser.parse_args()
 
     if not args.skip_validate and not run_validation():
         return 1
 
+    cloud = bool(os.environ.get("PORT"))
+    host = args.host or ("0.0.0.0" if cloud else "127.0.0.1")
+    open_browser = not args.no_browser and not os.environ.get("IG_NO_BROWSER") and host == "127.0.0.1"
+
     handler = partial(InclusiveGoHandler, directory=str(ROOT))
-    with ThreadingHTTPServer(("127.0.0.1", args.port), handler) as server:
-        url = f"http://127.0.0.1:{server.server_port}/"
-        print(f"InclusiveGo 網站已啟動：{url}", flush=True)
+    with ThreadingHTTPServer((host, args.port), handler) as server:
+        shown = "127.0.0.1" if host in ("0.0.0.0", "") else host
+        url = f"http://{shown}:{server.server_port}/"
+        print(f"InclusiveGo 網站已啟動：{url}（綁定 {host}）", flush=True)
         print("測試完畢請按 Control-C 停止。", flush=True)
-        Timer(0.5, webbrowser.open, args=(url,)).start()
+        if open_browser:
+            Timer(0.5, webbrowser.open, args=(url,)).start()
         try:
             server.serve_forever()
         except KeyboardInterrupt:

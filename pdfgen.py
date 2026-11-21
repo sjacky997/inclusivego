@@ -15,12 +15,14 @@ from reportlab.lib.enums import TA_LEFT
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.units import mm
+from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.cidfonts import UnicodeCIDFont
 from reportlab.platypus import (
     BaseDocTemplate,
     Frame,
     KeepTogether,
+    NextPageTemplate,
     PageBreak,
     PageTemplate,
     Paragraph,
@@ -57,6 +59,13 @@ def _register_fonts():
 
 
 FONT, FONT_BOLD = _register_fonts()
+
+COVER_IMAGE = Path(__file__).resolve().parent / "assets" / "cover-night.jpg"
+COVER_PAGE_IMAGE = Path(__file__).resolve().parent / "assets" / "pdf-cover.jpg"
+COVER_DEEP = colors.HexColor("#041a38")
+COVER_MID = colors.HexColor("#062349")
+COVER_BLUE = colors.HexColor("#0b3f96")
+COVER_LIME = colors.HexColor("#d7ff3f")
 
 INK = colors.HexColor("#10213a")
 BRAND = colors.HexColor("#075ed8")
@@ -121,8 +130,96 @@ def _box(flowables, bg=None, border=LINE, width=None):
     return outer
 
 
+COVER_CHIP = _style(9, COVER_LIME, leading=13, bold=True)
+COVER_TITLE = _style(33, colors.white, leading=40, bold=True)
+COVER_TITLE_EM = _style(33, COVER_LIME, leading=40, bold=True)
+COVER_SUB = _style(11, colors.HexColor("#dbe7ff"), leading=17)
+COVER_LEDE = _style(9.8, colors.HexColor("#cddaee"), leading=17)
+COVER_ITEM = _style(9.5, colors.white, leading=15)
+COVER_FOOT = _style(8, colors.HexColor("#9db1cb"), leading=13)
+
+
 def _heading(text):
     return _para(text, H2)
+
+
+def _draw_cover(canvas, doc):
+    """封面底圖：優先用合成好的整頁封面圖（無接縫），否則退回向量漸層。"""
+    if COVER_PAGE_IMAGE.exists():
+        canvas.drawImage(str(COVER_PAGE_IMAGE), 0, 0, PAGE_W, PAGE_H, mask=None)
+        return
+
+    canvas.saveState()
+    canvas.linearGradient(
+        0,
+        PAGE_H,
+        PAGE_W,
+        0,
+        [COVER_BLUE, COVER_MID, COVER_DEEP],
+        positions=[0, 0.52, 1],
+    )
+
+    if COVER_IMAGE.exists():
+        image = ImageReader(str(COVER_IMAGE))
+        image_w, image_h = image.getSize()
+        region_x = PAGE_W * 0.38
+        region_w = PAGE_W - region_x
+        scale = max(region_w / image_w, PAGE_H / image_h)
+        draw_w, draw_h = image_w * scale, image_h * scale
+
+        canvas.saveState()
+        path = canvas.beginPath()
+        path.rect(region_x, 0, region_w, PAGE_H)
+        canvas.clipPath(path, stroke=0, fill=0)
+        canvas.drawImage(
+            image,
+            region_x + (region_w - draw_w) / 2,
+            (PAGE_H - draw_h) / 2,
+            draw_w,
+            draw_h,
+            mask=None,
+        )
+        # 輕微壓暗，避免插畫比網站版本過亮
+        canvas.setFillColor(colors.Color(COVER_MID.red, COVER_MID.green, COVER_MID.blue, alpha=0.18))
+        canvas.rect(region_x, 0, region_w, PAGE_H, stroke=0, fill=1)
+        canvas.restoreState()
+
+        # 左緣淡出，讓插畫過渡到深藍底（段數夠多才不會出現條紋）
+        fade_w = region_w * 0.52
+        steps = 180
+        for index in range(steps):
+            alpha = 0.97 * (1 - index / (steps - 1))
+            canvas.setFillColor(colors.Color(COVER_MID.red, COVER_MID.green, COVER_MID.blue, alpha=alpha))
+            canvas.rect(region_x + index * fade_w / steps, 0, fade_w / steps + 0.6, PAGE_H, stroke=0, fill=1)
+
+    canvas.restoreState()
+
+
+def _cover_flowables(doc_data):
+    """封面文字：品牌 chip、標題、副標、導語、四項內容、頁腳說明。"""
+    meta = doc_data.get("meta") or []
+    created = meta[0] if meta else ""
+    flow = [
+        _para("我的行程指南", COVER_CHIP),
+        Spacer(1, 10),
+        _para("海濱樂園", COVER_TITLE),
+        _para("安心遊", COVER_TITLE_EM),
+        Spacer(1, 10),
+        _para("出發前準備 ＋ 社交故事", COVER_SUB),
+        Spacer(1, 12),
+        _para(
+            "讓我在出發前知道會看見甚麼、可能感受到甚麼，以及不舒服的時候可以怎樣做。",
+            COVER_LEDE,
+        ),
+        Spacer(1, 16),
+    ]
+    for item in ["我的準備清單", "建議安心路線", "景點感官提示", "簡短社交故事"]:
+        flow.append(_para(f"・{item}", COVER_ITEM))
+    flow.append(Spacer(1, 22))
+    if created:
+        flow.append(_para(created, COVER_FOOT))
+    flow.append(_para("插圖為示意，不代表實際園區位置", COVER_FOOT))
+    return flow
 
 
 def _cover(doc_data):
@@ -269,7 +366,8 @@ def _footer(canvas, doc):
     canvas.setFont(FONT, 8)
     canvas.setFillColor(SOFT)
     canvas.drawString(MARGIN, MARGIN - 4 * mm, "InclusiveGo 共融智遊")
-    canvas.drawRightString(PAGE_W - MARGIN, MARGIN - 4 * mm, f"第 {doc.page} 頁")
+    # 封面不編頁，內頁由第 1 頁起算
+    canvas.drawRightString(PAGE_W - MARGIN, MARGIN - 4 * mm, f"第 {max(1, doc.page - 1)} 頁")
     canvas.restoreState()
 
 
@@ -286,9 +384,26 @@ def build_pdf(doc_data: dict) -> bytes:
         author="InclusiveGo 共融智遊",
     )
     frame = Frame(MARGIN, MARGIN + 4 * mm, CONTENT_W, PAGE_H - 2 * MARGIN - 4 * mm, id="body")
-    doc.addPageTemplates([PageTemplate(id="main", frames=[frame], onPage=_footer)])
+    cover_frame = Frame(
+        MARGIN + 4,
+        PAGE_H * 0.16,
+        PAGE_W * 0.47,
+        PAGE_H * 0.68,
+        id="cover-text",
+        leftPadding=0,
+        rightPadding=0,
+        topPadding=0,
+        bottomPadding=0,
+    )
+    doc.addPageTemplates(
+        [
+            PageTemplate(id="cover", frames=[cover_frame], onPage=_draw_cover),
+            PageTemplate(id="main", frames=[frame], onPage=_footer),
+        ]
+    )
 
-    story = [_cover(doc_data), Spacer(1, 4 * mm)]
+    story = _cover_flowables(doc_data) + [NextPageTemplate("main"), PageBreak()]
+    story += [_cover(doc_data), Spacer(1, 4 * mm)]
     for line in doc_data.get("meta", []):
         story.append(_para(line, SMALL))
     story.append(Spacer(1, 5 * mm))
